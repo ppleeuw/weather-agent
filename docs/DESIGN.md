@@ -100,6 +100,8 @@ Uppercase labels are in character but rare: at most one per card, never in a sen
 
 Max content width 960 px, centred. Page padding 32 px left and right at 1280 px.
 
+Two utilities for blocks that scripts build: `.stack` is a column with an 8 px gap, `.row` a wrapping row with an 8 px gap. `.nowrap` keeps a figure on one line.
+
 ## Component styles
 
 All interactive components: `--font-ui` 16 px, height 40 px, focus ring 2 px `--color-accent` with 2 px offset, visible on keyboard focus only. Transitions 120 ms on background and border colour, nothing else animates except the loading indicator.

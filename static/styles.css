@@ -71,8 +71,12 @@ pre.code {
 .main { flex: 1; display: flex; flex-direction: column; gap: 32px; }
 .ask-row .input { flex: 1; }
 .result { display: flex; flex-direction: column; gap: 16px; }
-.result > :empty { display: none; } /* an empty answer or chip row must not add a gap */
+.result > p:empty, .result > .chips:empty { display: none; } /* an empty answer or chip row must not add a gap */
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+/* Two spacing utilities for blocks the scripts build: a column and a wrapping row, both on the 8 px step */
+.stack { display: flex; flex-direction: column; gap: 8px; }
+.row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.nowrap { white-space: nowrap; }
 .footer { padding-top: 16px; border-top: 1px solid var(--color-border); color: var(--color-text-muted); }
 
 /* Interactive components: one height, one font, a focus ring on keyboard focus only,
@@ -160,7 +164,7 @@ pre.code {
 .health-dot.ok .dot { background: var(--color-success); }
 .health-dot.degraded .dot { background: var(--color-warning); }
 .health-dot.down .dot { background: var(--color-error); }
-.health-card { position: absolute; top: 48px; right: 0; width: 320px; z-index: 1; }
+.health-card { position: absolute; top: 48px; right: 0; width: 320px; z-index: 1; display: flex; flex-direction: column; gap: 4px; }
 
 /* Settings modal: dimmed page, 960 px dialog, a header row, then a 200 px menu column and the
    page column, which scrolls. minmax(0, 1fr) lets that row shrink to the 80vh limit. */
