@@ -1,37 +1,45 @@
 /* Weather Agent styles.
-   Tokens and every rule come from docs/DESIGN.md: no shadows, no gradients,
-   1 px borders, weight 400 only, the accent is a marker and not a paint. */
+   Tokens and every rule come from docs/DESIGN.md: dark surfaces from mistral.ai, no shadows,
+   no gradients, 1 px borders, weight 400 only, the accent is a marker and not a paint. */
 
-/* Fonts are served from static/fonts so the page looks the same offline.
-   Latin subsets of Inter 400 and Instrument Serif 400, downloaded from Google Fonts on 2026-09-16. */
+/* Fonts are served from static/fonts so the page looks the same offline. mistral.ai loads
+   ALT Mistral (commercial) for headings, Inter for text and Space Mono for code; Space Grotesk
+   is the free stand-in for ALT Mistral. Latin subsets, weight 400, from Google Fonts on 2026-09-16. */
+@font-face {
+  font-family: "Space Grotesk"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("/fonts/space-grotesk-400-latin.woff2") format("woff2");
+}
 @font-face {
   font-family: "Inter"; font-style: normal; font-weight: 400; font-display: swap;
   src: url("/fonts/inter-400-latin.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Instrument Serif"; font-style: normal; font-weight: 400; font-display: swap;
-  src: url("/fonts/instrument-serif-400-latin.woff2") format("woff2");
+  font-family: "Space Mono"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("/fonts/space-mono-400-latin.woff2") format("woff2");
 }
 
-/* Tokens, copied verbatim from docs/DESIGN.md */
+/* Tokens, copied verbatim from docs/DESIGN.md. Neutrals are mistral.ai's dark theme, read from its stylesheet on 2026-09-16. */
 :root {
-  --font-display: "Instrument Serif", Georgia, serif; /* free stand-in for their commercial ALT Mistral */
-  --font-ui: "Inter", system-ui, sans-serif;          /* weight 400 only; hierarchy by size, not weight */
-  --font-code: ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: dark; /* form controls and scrollbars follow the dark page */
 
-  --color-text: #18181b;          /* not pure black */
-  --color-text-muted: #56566c;
-  --color-bg: #fbfbf8;            /* page background */
-  --color-surface: #f5f4ef;       /* cards, panels */
-  --color-surface-hover: #ebe9e0; /* hovered rows and menu items */
-  --color-border: #e4e3de;        /* 1 px borders */
-  --color-accent: #fa500f;        /* actions and active states only */
+  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif; /* free stand-in for their commercial ALT Mistral */
+  --font-ui: "Inter", system-ui, sans-serif;                         /* weight 400 only; hierarchy by size, not weight */
+  --font-code: "Space Mono", ui-monospace, monospace;                /* their mono face, also for labels */
+
+  --color-text: #fafaf4;          /* their text on dark: cream, not pure white */
+  --color-text-muted: #a1a1aa;    /* steel 400 */
+  --color-bg: #101013;            /* steel 950, page background */
+  --color-surface: #1a1a1e;       /* steel 900, cards and panels */
+  --color-surface-hover: #27272b; /* steel 800, hovered rows and menu items */
+  --color-border: #31313a;        /* their border on dark, 1 px */
+  --color-accent: #fa500f;        /* orange, actions and active states only */
   --color-accent-2: #ff8204;      /* secondary accent, sparingly */
-  --color-accent-3: #fec63a;      /* secondary accent, sparingly */
+  --color-accent-3: #fec63a;      /* yellow, badges for informational counts */
+  --color-on-accent: #101013;     /* text on an accent fill */
 
-  --color-success: #5c6b1f;       --color-success-bg: #f0f1dc;
-  --color-warning: #8a5e00;       --color-warning-bg: #fff4d2;
-  --color-error:   #b31200;       --color-error-bg:   #ffdccf;
+  --color-success: #94eacc;       --color-success-bg: #0f3b2a;
+  --color-warning: #fec63a;       --color-warning-bg: #3a2a05;
+  --color-error:   #f66c60;       --color-error-bg:   #4a1208;
 
   --radius-button: 8px;
   --radius-card: 12px;
@@ -50,7 +58,7 @@ details > summary { cursor: pointer; }
 .heading { font: 24px/32px var(--font-display); }
 .body { font: 16px/24px var(--font-ui); }
 .small, .badge { font: 13px/20px var(--font-ui); }
-.label, .table th { font: 12px/16px var(--font-ui); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); }
+.label, .table th { font: 12px/16px var(--font-code); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); }
 .code { font: 13px/20px var(--font-code); }
 .muted { color: var(--color-text-muted); }
 pre.code {
@@ -77,6 +85,7 @@ pre.code {
 .stack { display: flex; flex-direction: column; gap: 8px; }
 .row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .nowrap { white-space: nowrap; }
+.scroll-box { max-height: 312px; overflow-y: auto; } /* about five table rows; the rest scroll inside */
 .table td:has(> .nowrap) { width: 1%; } /* a figure cell shrinks to its content; the text column takes the rest */
 .footer { padding-top: 16px; border-top: 1px solid var(--color-border); color: var(--color-text-muted); }
 
@@ -89,7 +98,7 @@ pre.code {
 :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 
 .button-primary, .button-secondary, .menu-item, .health-dot { padding: 0 16px; border: none; background: transparent; cursor: pointer; }
-.button-primary { background: var(--color-accent); } /* label keeps --color-text: white on accent fails contrast */
+.button-primary { background: var(--color-accent); color: var(--color-on-accent); } /* a dark label: light text on orange fails contrast */
 .button-primary:hover { background: var(--color-accent-2); }
 .button-primary:active { background: color-mix(in srgb, var(--color-accent), black 8%); }
 .button-secondary { border: 1px solid var(--color-border); }
@@ -109,7 +118,7 @@ pre.code {
 .select {
   appearance: none; padding-right: 40px;
   background-repeat: no-repeat; background-position: right 12px center;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%2318181b' stroke-width='1.5'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%23fafaf4' stroke-width='1.5'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
 }
 
 /* Switch: a checkbox drawn as a pill; the knob is the ::before box */
@@ -120,7 +129,7 @@ pre.code {
 }
 .switch::before { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--color-text-muted); }
 .switch:checked { background: var(--color-accent); border-color: var(--color-accent); }
-.switch:checked::before { left: 19px; background: var(--color-text); }
+.switch:checked::before { left: 19px; background: var(--color-on-accent); }
 
 .card { padding: 16px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card); }
 
@@ -142,7 +151,7 @@ pre.code {
 .menu-item:hover, .menu-item.active { background: var(--color-surface-hover); }
 .menu-item.active { border-left-color: var(--color-accent); }
 
-.badge { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; background: var(--color-accent-3); } /* plain badge: an informational count */
+.badge { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; background: var(--color-accent-3); color: var(--color-on-accent); } /* plain badge: an informational count */
 .badge.ok { background: var(--color-success-bg); color: var(--color-success); }
 .badge.warning { background: var(--color-warning-bg); color: var(--color-warning); }
 .badge.fail { background: var(--color-error-bg); color: var(--color-error); }
@@ -172,10 +181,10 @@ pre.code {
 .modal-backdrop {
   position: fixed; inset: 0; z-index: 2; padding: 32px;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(24, 24, 27, 0.4);
+  background: rgba(0, 0, 0, 0.6);
 }
 .modal {
-  width: 960px; max-width: 100%; max-height: 80vh;
+  width: 960px; max-width: 100%; height: 80vh; /* fixed, so a page that is still loading does not shrink the dialog */
   display: grid; grid-template-columns: 200px 1fr; grid-template-rows: auto minmax(0, 1fr);
   background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-card); overflow: hidden;
 }
