@@ -8,6 +8,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follo
 ## [0.5.0] - 2026-09-16
 
 ### Added
+- Eval page: models as columns, layers as rows, a Run button per model and
+  Run all, progress while running, failures of the latest runs.
+
+### Added
 - Golden set of fifteen questions, four eval layers checked by code, a runner
   that saves reports with traces, a command line and the eval API.
 - Recordings of every golden question for offline replay.
@@ -16,6 +20,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follo
 - Wind verdicts carry the wind speed; the understand prompt asks for both tools
   and treats past dates as dates; the answer prompt asks for the number that
   belongs to a verdict.
+
+## [0.4.0] - 2026-09-16
+
+### Added
+- The browser front end as plain ES modules: the ask flow with answer, meta
+  line, suggestion chips and error box; the settings modal with the Models,
+  Trace, Cost and placeholder pages; the health dot with its card.
+- Self-hosted fonts, so the page renders the same offline.
 
 ## [0.3.0] - 2026-09-16
 

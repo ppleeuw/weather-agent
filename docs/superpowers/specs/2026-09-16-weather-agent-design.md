@@ -359,9 +359,11 @@ menu 200 px with the six items in order. Pages:
   outcome, detail. Then one card per step with handler, source, latency, tokens,
   cost, and collapsible request, raw response and result in code style.
   Totals at the top.
-- Eval: table with one row per model and columns tools, usage, grounding, rules,
-  mean latency, mean cost. Buttons "Run" per row and "Run all". Progress line
-  while running. Under the table a list of failures: model, item, layer, reason.
+- Eval: table with one column per model and one row per layer (tools, usage,
+  grounding, rules), then mean latency, mean cost, last run and a "Run" button
+  per model, plus "Run all". Progress line while running. Under the table a
+  list of failures: model, item, layer, reason. Changed during the build from
+  one row per model: eight columns did not fit the 720 px page column.
 - Cost: price table with source and date; last request per step; session total;
   last eval run per model.
 - Model suitability and EU AI Act: heading and one muted placeholder line.

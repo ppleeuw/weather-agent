@@ -1,12 +1,13 @@
-// eval.js: the Eval page. One row per model with the pass rate of each
-// layer, a Run button per row and one Run all button, a progress line while
-// a run is going, and the failures of the latest runs under the table.
+// eval.js: the Eval page. One column per model, one row per layer with its
+// pass rate, then mean latency, mean cost, the time of the last run and a Run
+// button per model, plus one Run all button, a progress line while a run is
+// going, and the failures of the latest runs under the table.
 //
 // The page polls GET /api/eval every 2 s while a run is in progress. It stops
 // when the run is done or when the page is left, which it notices because its
 // heading is no longer in the document.
 
-import { getEval, getSettings, runEval } from "../api.js";
+import { getCost, getEval, getSettings, runEval } from "../api.js";
 import { el, errorBox, table } from "../dom.js";
 import { formatCost, formatLatency, formatRate, formatTime } from "../format.js";
 
@@ -14,7 +15,13 @@ const POLL_MS = 2000;
 const INTRO =
   "Fifteen golden questions, four checks each: the tools the model called, how it used them, " +
   "whether the answer is grounded in the tool results, and the answer rules. A rate is passed over applicable.";
-const HEADERS = ["Model", "Tools", "Usage", "Grounding", "Rules", "Latency", "Cost", ""];
+// The four pass-rate layers, in the order the eval checks them.
+const LAYERS = [
+  { key: "tools", label: "Tools: which tools the model called" },
+  { key: "usage", label: "Usage: place, date, block" },
+  { key: "grounding", label: "Grounding: numbers in the tool results" },
+  { key: "rules", label: "Rules: what the answer must contain" },
+];
 
 // The elements of the page that is on screen. A new render replaces them all.
 let view = null;
@@ -30,6 +37,7 @@ export async function render(container) {
     results: el("div"),
     failures: el("div"),
     modelIds: [],
+    labels: {}, // model id to label, from the price table
     timer: null,
   };
   const toolbar = el("div", "chips");
@@ -39,6 +47,10 @@ export async function render(container) {
   try {
     const settings = await getSettings();
     view.modelIds = settings.options.understand; // the same four models the Models page offers
+    const cost = await getCost();
+    for (const price of cost.prices) {
+      view.labels[price.model] = price.label;
+    }
   } catch (error) {
     view.results.replaceChildren(errorBox("Could not load the model list: " + error.message));
     return;
@@ -63,6 +75,7 @@ async function refresh() {
 }
 
 function showState(state) {
+  view.latest = state.latest;
   view.runAll.disabled = state.running;
   view.progress.hidden = !state.running;
   view.progress.textContent = progressText(state);
@@ -78,43 +91,36 @@ function progressText(state) {
   return "Running " + progress.model + ": " + progress.done + " of " + progress.total + " questions done.";
 }
 
+// Models across, layers down: four models compare best side by side.
 function resultTable(state) {
-  const rows = [];
+  const headers = [""];
   for (const modelId of view.modelIds) {
-    rows.push(modelRow(modelId, state.latest[modelId], state.running));
+    headers.push(view.labels[modelId] || modelId);
   }
-  return table(HEADERS, rows);
+  const rows = [perModel("Model id", (modelId) => el("span", "small muted", modelId))];
+  for (const layer of LAYERS) {
+    rows.push(perModel(layer.label, (modelId, latest) => latest ? formatRate(latest.summary[layer.key]) : "not run yet"));
+  }
+  rows.push(perModel("Mean latency", (modelId, latest) => latest ? formatLatency(latest.summary.mean_latency_ms) : ""));
+  rows.push(perModel("Mean cost per question", (modelId, latest) => latest ? formatCost(latest.summary.mean_cost_usd) : ""));
+  rows.push(perModel("Last run", (modelId, latest) => latest ? el("span", "small muted", formatTime(latest.finished_at)) : ""));
+  rows.push(perModel("", (modelId) => runButtonFor(modelId, state.running)));
+  return table(headers, rows);
 }
 
-function modelRow(modelId, latest, running) {
+// One table row: the row title, then one cell per model built by cellFor(modelId, latest).
+function perModel(title, cellFor) {
+  const row = [title];
+  for (const modelId of view.modelIds) {
+    row.push(cellFor(modelId, view.latest[modelId]));
+  }
+  return row;
+}
+
+function runButtonFor(modelId, running) {
   const run = runButton("Run", modelId, "button-secondary");
   run.disabled = running;
-  if (!latest) {
-    return [twoLineCell(modelId, "not run yet"), "", "", "", "", "", "", run];
-  }
-  const summary = latest.summary;
-  return [
-    twoLineCell(latest.label, modelId + " · " + formatTime(latest.finished_at)),
-    figure(formatRate(summary.tools)),
-    figure(formatRate(summary.usage)),
-    figure(formatRate(summary.grounding)),
-    figure(formatRate(summary.rules)),
-    figure(formatLatency(summary.mean_latency_ms)),
-    figure(formatCost(summary.mean_cost_usd)),
-    run,
-  ];
-}
-
-// A figure that must not wrap, so the model column gets the spare width.
-function figure(text) {
-  return el("span", "nowrap", text);
-}
-
-// A cell with a title and a small muted line under it.
-function twoLineCell(title, subtitle) {
-  const cell = el("div");
-  cell.append(el("div", "", title), el("div", "small muted", subtitle));
-  return cell;
+  return run;
 }
 
 function runButton(text, model, className) {
@@ -143,7 +149,7 @@ function failuresBlock(latest) {
   for (const modelId of Object.keys(latest)) {
     const summary = latest[modelId];
     for (const failure of summary.failures || []) {
-      rows.push([summary.label || modelId, twoLineCell(failure.item, failure.question), failure.layer, failure.reason]);
+      rows.push([summary.label || modelId, String(failure.item) + ". " + failure.question, failure.layer, failure.reason]);
     }
   }
   if (Object.keys(latest).length === 0) {
