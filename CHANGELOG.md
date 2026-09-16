@@ -5,6 +5,44 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follo
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-16
+
+### Added
+- Nominatim as a second geocoder, selectable on the Models page: same candidate
+  shape, ranked by its importance score, throttled to one request per second,
+  with an identifying User-Agent; the forecast asks Open-Meteo for the timezone
+  Nominatim lacks. Not the default.
+- Model suitability page: the four models compared per layer, latency and cost,
+  with an assessment and a recommendation per step from the run of
+  16 September 2026.
+- EU AI Act page: a working assessment of the app under Regulation (EU)
+  2024/1689, with the transparency notice it calls for added to the empty state.
+- Eval results for Claude Haiku 4.5 and Claude Sonnet 5, now that the key works.
+- An `is_english` eval rule on the English questions, after Claude Sonnet 5
+  answered seven of them in German in its first run.
+
+### Changed
+- Dark theme in the manner of mistral.ai: their steel neutrals and orange,
+  Space Grotesk as the free stand-in for their ALT Mistral headings, Inter for
+  text, Space Mono for labels and code, all self-hosted. DESIGN.md rewritten
+  with recomputed contrast ratios.
+- New pixel mark: a speech bubble of warm squares with three typing dots.
+- The answer step puts the facts first and the question last and is told to
+  reply in the question's language; every model now answers in English to
+  English questions.
+- The country filter matches partial names and a few aliases, so "Netherlands"
+  finds "The Netherlands"; this had cost Claude Haiku the Utrecht question.
+- The settings window has a fixed height, so a loading page no longer makes
+  it shrink and flash.
+- Failures under the Eval table show five rows and scroll for the rest.
+- The Models page text names the four models and both geocoders.
+
+### Removed
+- The line under the answer with model, latency, cost and the trace link; the
+  Trace page has all of it.
+- The data credits line in the footer; the credits are on the Cost page and in
+  the README.
+
 ## [1.0.0] - 2026-09-16
 
 First complete version for the interview demo.

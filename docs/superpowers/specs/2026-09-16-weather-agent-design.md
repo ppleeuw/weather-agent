@@ -3,6 +3,11 @@
 Date: 2026-09-16. Status: approved in conversation, this file is the written record.
 Interview: 2026-09-17. Everything here is built in one working day.
 
+Changed after 1.0.0, see CHANGELOG 1.1.0: the theme is dark in the manner of
+mistral.ai with new fonts and a pixel mark (DESIGN.md is the current record);
+Nominatim is available as a second, non-default geocoder; the line under the
+answer and the footer credits are gone; the two placeholder pages are written.
+
 ## 1. Goal
 
 A web app where the user types a weather question in natural language and an AI

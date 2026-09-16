@@ -67,7 +67,7 @@ flowchart LR
         pipeline[pipeline.py]
         guardrails[guardrails.py]
         understand[understand.py]
-        geocode[geocode.py]
+        geocode[geocode.py: Open-Meteo or Nominatim]
         forecast[forecast.py]
         verdicts[verdicts.py]
         answer[answer.py]
@@ -82,6 +82,7 @@ flowchart LR
         mistral[(Mistral API)]
         anthropic[(Anthropic API)]
         geo[(Open-Meteo Geocoding)]
+        osm[(Nominatim)]
         fc[(Open-Meteo Forecast)]
     end
 
@@ -90,6 +91,7 @@ flowchart LR
     pipeline --> guardrails
     pipeline --> understand --> providers
     pipeline --> geocode --> geo
+    geocode --> osm
     pipeline --> forecast --> fc
     forecast --> verdicts
     pipeline --> answer --> providers
@@ -108,7 +110,7 @@ flowchart LR
     classDef ext fill:#fbfbf8,stroke:#e4e3de,color:#56566c;
     class understand,answer,providers model;
     class app,settings,main,pipeline,guardrails,geocode,forecast,verdicts,recording,trace,pricing,health,eval code;
-    class mistral,anthropic,geo,fc ext;
+    class mistral,anthropic,geo,osm,fc ext;
 ```
 
 Amber boxes call a language model. Grey boxes are plain code. The model is only
@@ -119,8 +121,8 @@ decides whether a number means rain.
 | Decision | Made by | Where |
 |---|---|---|
 | Is this a weather question, which place, which time words | model | understand.py prompt and tool schemas |
-| Which of several places is meant | code | geocode.choose, population ratio rule |
-| Timezone | code, from the geocoding result | forecast.build_request |
+| Which of several places is meant | code | geocode.choose, score ratio rule: population for Open-Meteo, importance for Nominatim |
+| Timezone | code, from the geocoding result, or "auto" so Open-Meteo reports it | forecast.build_request |
 | Which local date "tomorrow" or "Saturday" is | code, from the dates the service returns | forecast.resolve |
 | Is the date within reach | code, before any call and again after | forecast.precheck, forecast.resolve |
 | Units | code, Open-Meteo defaults | forecast.UNITS |
@@ -134,7 +136,7 @@ decides whether a number means rain.
 |---|---|---|---|
 | Step 1 mechanism | Native function calling, one round, two tools, code links them | Classic agent loop where the model receives the geocode result and calls the forecast tool with coordinates | Three or more model calls, a provider-specific tool-result protocol, and the model handles coordinates |
 | Step 1 mechanism | as above | Structured JSON plan without tools | The eval's tool-selection layer would measure a JSON field, and function calling is what the providers optimise for |
-| Geocoding | Open-Meteo Geocoding | Nominatim | One request per second, no population, no timezone, an identifying User-Agent, a policy clause on LLM-generated code; the population rule needed population |
+| Default geocoder | Open-Meteo Geocoding | Nominatim as default | One request per second, no population, no timezone. Nominatim is available as the second option: same candidate shape, ranked by its importance score, throttled to the policy, with an identifying User-Agent; the forecast asks Open-Meteo for the timezone it lacks |
 | Date handling | Resolve on the local dates the forecast service returns | Timezone arithmetic in code | Avoids zoneinfo edge cases and keeps one code path; the eval re-checks with zoneinfo independently |
 | Provider access | REST with httpx | Official SDKs | Two large dependency trees, hidden retries, and the wire format would not be in the trace unchanged |
 | Frontend | Plain HTML, CSS and ES modules | Vite with React or Preact | A build step and hundreds of packages for one page and one modal |

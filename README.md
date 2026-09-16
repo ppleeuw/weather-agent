@@ -25,7 +25,8 @@ cp .env.example .env        # then put your keys in .env; it is never committed
 
 Open http://127.0.0.1:8000. Type a question, or click one of the two example
 questions. The gear opens the settings window; the dot next to it shows the
-health of every dependency and lists them when clicked.
+health of every dependency and lists them when clicked. The figures of a
+request, model, latency, tokens and cost, are on the Trace page.
 
 Command line, same pipeline, no browser:
 
@@ -78,11 +79,14 @@ shape invalidates the model recordings: run the eval live once to re-record.
 
 ## Settings window
 
-Models: one dropdown per pipeline step and the offline switch. Trace: the last
-request with every guardrail event, then every step with request, raw response,
-result, tokens, latency and cost. Eval: the table above and a run button. Cost:
-the price table with sources, the last request, the session total and the last
-eval. Model suitability and EU AI Act: to be written after the eval results.
+Models: one dropdown per pipeline step, four models for the two model steps,
+Open-Meteo Geocoding or Nominatim for the geocode step, and the offline switch.
+Trace: the last request with every guardrail event, then every step with
+request, raw response, result, tokens, latency and cost. Eval: the table above
+and a run button. Cost: the price table with sources, the last request, the
+session total, the last eval and the data sources. Model suitability: the
+comparison of the four models and what it means for each step. EU AI Act: a
+working assessment of the app under the regulation.
 
 ## Guardrails
 
@@ -108,8 +112,12 @@ Nothing else. The .env file is read by a twelve-line function.
 
 Weather data by [Open-Meteo.com](https://open-meteo.com/), CC BY 4.0, free for
 non-commercial use within 10,000 calls a day. Location data based on GeoNames
-through the Open-Meteo Geocoding API. Model prices are list prices per million
-tokens from https://mistral.ai/pricing/api and
+through the Open-Meteo Geocoding API, the default geocoder, and on
+OpenStreetMap through [Nominatim](https://nominatim.org/), © OpenStreetMap
+contributors, ODbL, when Nominatim is selected on the Models page. Nominatim's
+usage policy allows one request per second with an identifying User-Agent; the
+adapter keeps to both. Model prices are list prices per million tokens from
+https://mistral.ai/pricing/api and
 https://platform.claude.com/docs/en/about-claude/pricing, read on 2026-09-16.
 
 ## Documents

@@ -21,7 +21,7 @@ Temperatures are shown in Celsius.
 
 ## Stack and commands
 
-Python 3.14, FastAPI, uvicorn, httpx, pytest. Frontend: plain HTML, CSS and JavaScript ES modules served by FastAPI, no build step. Both model providers are called over REST with httpx; both services are Open-Meteo.
+Python 3.14, FastAPI, uvicorn, httpx, pytest. Frontend: plain HTML, CSS and JavaScript ES modules served by FastAPI, no build step. Both model providers are called over REST with httpx. Forecasts come from Open-Meteo; geocoding from Open-Meteo Geocoding by default or Nominatim when selected.
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
@@ -38,7 +38,7 @@ cp .env.example .env                                   # fill in MISTRAL_API_KEY
 |---|---|
 | `weather_agent/pipeline.py` | one request: guardrails, understand, geocode, forecast, answer, guardrails |
 | `weather_agent/understand.py` | step 1, model: system prompt, the two tool schemas, validation of the model's tool calls |
-| `weather_agent/geocode.py` | step 2, service: Open-Meteo Geocoding and the place selection rule |
+| `weather_agent/geocode.py` | step 2, service: Open-Meteo Geocoding or Nominatim, one candidate shape, the place selection rule |
 | `weather_agent/forecast.py`, `verdicts.py` | step 3, service: Open-Meteo Forecast, date resolution on local dates, facts, verdicts |
 | `weather_agent/answer.py` | step 4, model: phrasing prompt and the English templates for every other outcome |
 | `weather_agent/guardrails.py` | length, rate limit, grounding, system prompt leak |
@@ -48,7 +48,7 @@ cp .env.example .env                                   # fill in MISTRAL_API_KEY
 | `weather_agent/health.py` | the seven dependency checks behind the dot |
 | `weather_agent/main.py`, `config.py` | FastAPI routes; .env loading and in-memory settings |
 | `weather_agent/eval/` | golden set, the four layer checks, the runner, saved results |
-| `static/` | the page: index.html, styles.css, app.js, settings.js, pages/, fonts/, logo |
+| `static/` | the page: index.html, styles.css (dark Mistral theme), app.js, settings.js, pages/ (models, trace, eval, cost, suitability, eu-ai-act), fonts/, pixel logo |
 | `fixtures/` | recordings of the golden set for offline replay |
 | `tests/` | one file per module, fixtures under tests/fixtures |
 | `docs/` | ARCHITECTURE.md, DESIGN.md, the spec and the plan under superpowers/ |
