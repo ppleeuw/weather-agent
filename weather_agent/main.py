@@ -8,6 +8,7 @@ errors; the body says which. Only malformed requests get a 4xx.
 """
 from __future__ import annotations
 
+import threading
 from pathlib import Path
 
 import httpx
@@ -17,6 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from weather_agent import VERSION, config, health, pricing, trace
+from weather_agent.eval import runner
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
@@ -26,6 +28,14 @@ app.state.client = httpx.Client(timeout=30)  # one outbound client for the whole
 
 class AskBody(BaseModel):
     question: str
+
+
+class EvalBody(BaseModel):
+    model: str  # a model id, or "all"
+
+
+# One eval run at a time; the page polls this while it runs.
+eval_state: dict = {"running": False, "done": 0, "total": 0, "model": ""}
 
 
 @app.post("/api/ask")
@@ -92,8 +102,55 @@ def get_cost() -> dict:
         "checked_on": pricing.CHECKED_ON,
         "last_request": _cost_of(latest) if latest else None,
         "session_total_usd": trace.STORE.session_cost(),
-        "last_eval": None,
+        "last_eval": {model: result["summary"]["total_cost_usd"] for model, result in runner.latest_per_model().items()} or None,
     }
+
+
+@app.post("/api/eval/run", status_code=202)
+def start_eval(body: EvalBody) -> JSONResponse:
+    if eval_state["running"]:
+        return JSONResponse({"error": "An eval run is already in progress."}, status_code=409)
+    models = list(config.OPTIONS["understand"]) if body.model == "all" else [body.model]
+    if any(model not in config.OPTIONS["understand"] for model in models):
+        return JSONResponse({"error": f"unknown model {body.model!r}"}, status_code=400)
+    run_id = f"batch-{trace.now_iso()}"
+    eval_state.update(running=True, done=0, total=len(models) * len(runner.GOLDEN), model=models[0])
+    threading.Thread(target=_run_eval_models, args=(models,), daemon=True).start()
+    return JSONResponse({"run_id": run_id}, status_code=202)
+
+
+@app.get("/api/eval")
+def get_eval() -> dict:
+    return {
+        "running": eval_state["running"],
+        "progress": {"done": eval_state["done"], "total": eval_state["total"], "model": eval_state["model"]},
+        "latest": runner.latest_per_model(),
+    }
+
+
+@app.get("/api/eval/{run_id}")
+def one_eval(run_id: str) -> dict:
+    result = runner.load(run_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="No saved run with that id.")
+    return result
+
+
+def _run_eval_models(models: list[str]) -> None:
+    """Runs in a background thread: one model after the other, saving each report."""
+    finished_items = 0
+    try:
+        for model in models:
+            eval_state["model"] = model
+
+            def progress(done: int, total: int) -> None:
+                eval_state["done"] = finished_items + done
+
+            result = runner.run_eval(model, config.current_settings(), client=app.state.client, progress=progress)
+            runner.save(result)
+            finished_items += len(runner.GOLDEN)
+    finally:
+        eval_state.update(running=False, model="")
 
 
 def _settings_body() -> dict:

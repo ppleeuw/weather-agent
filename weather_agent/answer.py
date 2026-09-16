@@ -18,10 +18,14 @@ from weather_agent.providers import CallBudget, ModelResponse
 SYSTEM_PROMPT = (
     "You phrase weather facts for the user. Use only the values in the facts; add no other "
     "knowledge and no advice beyond the verdicts.\n"
-    "At most two sentences, the key number first, with its unit exactly as given. When the "
-    "facts contain a verdict, start with yes, no or unlikely.\n"
-    "Answer in the language of the question. Name the place, and name the date when the "
-    "question is about a day other than now."
+    "Write one or two sentences. Lead with the key number and its unit exactly as given, then "
+    "add the one or two facts that matter for the question: the sky, the wind, the rain "
+    "probability in percent, the temperature range. A short remark on how it feels is welcome, "
+    "without new numbers.\n"
+    "When the facts contain a verdict, start with yes, no or unlikely and give the probability "
+    "in percent.\n"
+    "Answer in the language of the question. Name the place. Say 'right now' for current "
+    "conditions. Name a day by its weekday and date in words, never as an ISO date."
 )
 
 TEMPLATES = {
@@ -63,8 +67,9 @@ def place_label(candidate: Candidate) -> str:
 
 def _which(name: str, candidates: list[Candidate]) -> str:
     labels = [place_label(c) for c in candidates[:3]]
+    # Semicolons between places, because each label already contains commas.
     if len(labels) > 1:
-        listed = ", ".join(labels[:-1]) + " or " + labels[-1]
+        listed = "; ".join(labels[:-1]) + "; or " + labels[-1]
     else:
         listed = labels[0]
     return f"Which {name} do you mean? {listed}?"

@@ -26,6 +26,8 @@ class GoldenItem:
     expected_when: list[str] | None = None  # acceptable When kinds
     expected_block: str | None = None  # current | daily | hourly
     city_centre: tuple[float, float] | None = None
+    expected_weekday: str | None = None  # for kind weekday
+    expected_days: int | None = None  # for kind period
     no_forecast_call: bool = False
     rules: list[str] = field(default_factory=list)
     notes: str = ""
@@ -45,9 +47,10 @@ GOLDEN: list[GoldenItem] = [
     GoldenItem(6, "Do I need an umbrella in London this afternoon?", BOTH, "weather", "GB", "England", ["today"], "hourly", (51.5074, -0.1278),
                rules=["starts_yes_no_unlikely", "has_percent"], notes="Hourly 12 to 18 in Europe/London."),
     GoldenItem(7, "What will the temperature be in Tokyo on Saturday?", BOTH, "weather", "JP", None, ["weekday"], "daily", (35.6762, 139.6503),
-               rules=["two_celsius_values", "names_the_date"], notes="Next Saturday in Asia/Tokyo, max and min."),
+               expected_weekday="Saturday", rules=["two_celsius_values", "names_the_date"],
+               notes="Next Saturday in Asia/Tokyo, max and min."),
     GoldenItem(8, "Will it snow in Oslo this week?", BOTH, "weather", "NO", None, ["period"], "daily", (59.9139, 10.7522),
-               rules=["starts_yes_no", "names_days_if_snow"], notes="Seven days of snowfall."),
+               expected_days=7, rules=["starts_yes_no", "names_days_if_snow"], notes="Seven days of snowfall."),
     GoldenItem(9, "How cold was it in Berlin in January 1950?", BOTH_OR_LOOKUP, "date_out_of_range", "DE", None, ["date"], None, None,
                no_forecast_call=True, rules=["template_out_of_range"], notes="Rejected by code before any forecast call."),
     GoldenItem(10, "What's the weather in Qwxlorbia?", BOTH_OR_LOOKUP, "place_not_found", None, None, None, None, None,

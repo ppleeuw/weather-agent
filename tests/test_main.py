@@ -44,3 +44,14 @@ def test_ask_rejects_long_input_with_ok_body():
     body = TestClient(app).post("/api/ask", json={"question": "x" * 600}).json()
     assert body["ok"] is True and body["outcome"] == "input_too_long" and body["trace_id"]
     assert TestClient(app).get("/api/trace").json()["outcome"] == "input_too_long"
+
+
+def test_eval_status_and_unknown_run(monkeypatch, tmp_path):
+    from weather_agent.eval import runner
+
+    monkeypatch.setattr(runner, "RESULTS_DIR", tmp_path)
+    client = TestClient(app)
+    body = client.get("/api/eval").json()
+    assert body["running"] is False and body["latest"] == {} and body["progress"]["total"] == 0
+    assert client.get("/api/eval/nope").status_code == 404
+    assert client.post("/api/eval/run", json={"model": "gpt-99"}).status_code == 400
