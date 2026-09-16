@@ -9,6 +9,8 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from pathlib import Path
 
+from weather_agent import providers
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 ENV_FILE = PROJECT_ROOT / ".env"
 
@@ -31,7 +33,7 @@ ENV = load_env(ENV_FILE)
 
 # Which handler may run each pipeline step. The two service steps have one
 # option each on purpose: Open-Meteo was chosen for both, see the design spec.
-MODEL_IDS = ["mistral-small-latest", "mistral-medium-latest", "claude-haiku-4-5", "claude-sonnet-5"]
+MODEL_IDS = list(providers.MODELS)
 OPTIONS: dict[str, list[str]] = {
     "understand": MODEL_IDS,
     "geocode": ["open-meteo-geocoding"],
