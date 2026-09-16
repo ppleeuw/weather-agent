@@ -101,14 +101,14 @@ def _understand_step(question: str, settings: Settings, t: Trace, budget: CallBu
 
 def _geocode_step(place: understand.Place, settings: Settings, t: Trace, client: httpx.Client) -> geocode.Selection:
     started_at, started = trace.now_iso(), time.perf_counter()
-    raw, candidates, source = geocode.search(place.name, settings.offline, client)
-    selection = geocode.choose(candidates, place.name, place.region, place.country)
+    request, raw, candidates, source = geocode.search(place.name, place.region, place.country, settings.offline, client, settings.geocode)
+    selection = geocode.choose(candidates, place.name, place.region, place.country, settings.geocode)
     result = {
         "outcome": selection.outcome,
         "place": asdict(selection.place) if selection.place else None,
         "candidates": [asdict(c) for c in selection.candidates],
     }
-    t.add_step(Step("geocode", "service", settings.geocode, started_at, _ms(started), geocode.build_request(place.name), raw, result, source=source))
+    t.add_step(Step("geocode", "service", settings.geocode, started_at, _ms(started), request, raw, result, source=source))
     return selection
 
 

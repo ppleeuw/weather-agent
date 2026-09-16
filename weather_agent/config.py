@@ -31,12 +31,12 @@ def load_env(path: Path) -> dict[str, str]:
 
 ENV = load_env(ENV_FILE)
 
-# Which handler may run each pipeline step. The two service steps have one
-# option each on purpose: Open-Meteo was chosen for both, see the design spec.
+# Which handler may run each pipeline step. Open-Meteo Geocoding is the default
+# geocoder; Nominatim is the alternative. The forecast has one source.
 MODEL_IDS = list(providers.MODELS)
 OPTIONS: dict[str, list[str]] = {
     "understand": MODEL_IDS,
-    "geocode": ["open-meteo-geocoding"],
+    "geocode": ["open-meteo-geocoding", "nominatim"],
     "forecast": ["open-meteo-forecast"],
     "answer": MODEL_IDS,
 }

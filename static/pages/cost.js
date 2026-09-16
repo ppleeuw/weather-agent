@@ -15,7 +15,7 @@ export async function render(container) {
       return; // the user moved to another page while the data was loading
     }
     container.append(priceSection(data), lastRequestSection(data.last_request));
-    container.append(sessionLine(data.session_total_usd), lastEvalSection(data.last_eval));
+    container.append(sessionLine(data.session_total_usd), lastEvalSection(data.last_eval), dataSources());
   } catch (error) {
     if (heading.isConnected) {
       container.append(errorBox("Could not load the cost data: " + error.message));
@@ -63,6 +63,14 @@ function lastRequestSection(last) {
 
 function sessionLine(total) {
   return el("p", "", "Session total since the server started: " + formatCost(total));
+}
+
+// The services cost nothing but ask for credit; it lives here and in the README.
+function dataSources() {
+  const block = el("div", "stack");
+  block.append(el("p", "", "Data sources"));
+  block.append(el("p", "muted", "Weather data by Open-Meteo.com, CC BY 4.0, free for non-commercial use. Location data based on GeoNames through the Open-Meteo Geocoding API, and on OpenStreetMap through Nominatim, © OpenStreetMap contributors, ODbL."));
+  return block;
 }
 
 function lastEvalSection(lastEval) {

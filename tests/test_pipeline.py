@@ -130,3 +130,26 @@ def test_eval_traces_can_stay_out_of_the_store(tmp_path, monkeypatch):
     client, _ = make_client("It is 14 °C in Paris right now.")
     pipeline.run("How warm is it in Paris?", settings(), "test", client=client, env=ENV, keep=False)
     assert pipeline.trace.STORE.latest() is before
+
+
+def test_nominatim_setting_routes_the_geocode_step(tmp_path, monkeypatch):
+    monkeypatch.setattr(pipeline.recording, "FIXTURES", tmp_path)
+    monkeypatch.setattr(pipeline.geocode, "NOMINATIM_MIN_INTERVAL_S", 0)
+    state = {"model_calls": 0}
+
+    def handler(request):
+        host = request.url.host
+        if host == "nominatim.openstreetmap.org":
+            return httpx.Response(200, json=json.loads((FIX / "nominatim_paris.json").read_text()))
+        if host == "api.open-meteo.com":
+            assert request.url.params["timezone"] == "auto"
+            return httpx.Response(200, json=json.loads((FIX / "forecast_paris_now.json").read_text()))
+        state["model_calls"] += 1
+        body = mistral_tool_response() if state["model_calls"] == 1 else mistral_text_response("It is 20 °C in Paris right now.")
+        return httpx.Response(200, json=body)
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    nominatim = config.Settings("mistral-medium-latest", "nominatim", "open-meteo-forecast", "mistral-medium-latest", False)
+    t = pipeline.run("How warm is it in Paris?", nominatim, "test", client=client, env=ENV)
+    assert t.outcome == "weather" and t.steps[1].handler == "nominatim" and t.steps[1].request["url"] == pipeline.geocode.NOMINATIM_URL
+    assert t.steps[2].result["facts"]["place"]["timezone"] == "Europe/Paris"

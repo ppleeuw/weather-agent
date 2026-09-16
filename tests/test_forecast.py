@@ -188,3 +188,12 @@ def test_weekday_names_are_english_and_fixed():
 def test_wind_verdict_carries_its_speed():
     v = forecast.facts(PARIS, forecast.When("now", aspects=["wind"]), raw("forecast_paris_now.json"))["verdicts"]
     assert set(v) == {"windy", "wind_kmh"} and v["wind_kmh"] == raw("forecast_paris_now.json")["current"]["wind_speed_10m"]
+
+
+def test_unknown_timezone_asks_open_meteo_and_reads_it_back():
+    from dataclasses import replace
+
+    no_zone = replace(PARIS, timezone="")
+    assert forecast.build_request(no_zone, forecast.When("now"))["params"]["timezone"] == "auto"
+    f = forecast.facts(no_zone, forecast.When("now"), raw("forecast_paris_now.json"))
+    assert f["place"]["timezone"] == "Europe/Paris"  # from the response, not from the geocoder

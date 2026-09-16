@@ -20,7 +20,7 @@ def test_root_serves_index():
 def test_settings_round_trip():
     client = TestClient(app)
     before = client.get("/api/settings").json()
-    assert before["options"]["geocode"] == ["open-meteo-geocoding"]
+    assert before["options"]["geocode"] == ["open-meteo-geocoding", "nominatim"]
     after = client.put("/api/settings", json={"understand": "claude-haiku-4-5"}).json()
     assert after["understand"] == "claude-haiku-4-5" and after["answer"] == before["answer"]
     client.put("/api/settings", json={"understand": before["understand"]})

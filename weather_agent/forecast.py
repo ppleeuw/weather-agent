@@ -100,7 +100,8 @@ def _readable_date(text: str) -> bool:
 
 def build_request(place: Candidate, when: When) -> dict:
     """The exact Open-Meteo call for this question; recording.py keys on it too."""
-    params: dict = {"latitude": place.latitude, "longitude": place.longitude, "timezone": place.timezone}
+    # Nominatim knows no timezone; "auto" makes Open-Meteo resolve it and report it back.
+    params: dict = {"latitude": place.latitude, "longitude": place.longitude, "timezone": place.timezone or "auto"}
     if when.kind == "now":
         params["current"] = ",".join(CURRENT_VARS)
         params["daily"] = ",".join(NOW_DAILY_VARS)
@@ -210,7 +211,7 @@ def facts(place: Candidate, when: When, raw: dict) -> dict:
     return {
         "place": {"name": place.name, "admin1": place.admin1, "country": place.country,
                   "country_code": place.country_code, "latitude": place.latitude,
-                  "longitude": place.longitude, "timezone": place.timezone},
+                  "longitude": place.longitude, "timezone": place.timezone or raw.get("timezone", "")},
         "today": raw["daily"]["time"][0],
         "when": resolved,
         "current": current,
