@@ -121,6 +121,10 @@ All interactive components: `--font-ui` 16 px, height 40 px, focus ring 2 px `--
 
 Error messages say what failed and what the user can do, in one sentence each. The loading indicator sits where the result will appear, never in the button.
 
+## Logo, favicon
+
+For each tool, create your own logo with a matching favicon. Spend some time on it, make it unique.
+
 ## Responsive behaviour
 
 Primary target is a 1280 px screen share. Nothing below 768 px matters.
