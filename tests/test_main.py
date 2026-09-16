@@ -7,7 +7,7 @@ from weather_agent.main import app
 
 def test_health_reports_version(monkeypatch):
     monkeypatch.setattr(health, "_cache", None)
-    app.state.client = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200)))
+    monkeypatch.setattr(app.state, "client", httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200))))
     body = TestClient(app).get("/api/health").json()
     assert body["version"] == VERSION and body["status"] in {"ok", "degraded", "down"} and "_at" not in body
 
@@ -55,3 +55,33 @@ def test_eval_status_and_unknown_run(monkeypatch, tmp_path):
     assert body["running"] is False and body["latest"] == {} and body["progress"]["total"] == 0
     assert client.get("/api/eval/nope").status_code == 404
     assert client.post("/api/eval/run", json={"model": "gpt-99"}).status_code == 400
+
+
+def test_eval_run_accepts_and_saves(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+
+    from weather_agent import main
+    from weather_agent.eval import runner
+
+    monkeypatch.setattr(runner, "RESULTS_DIR", tmp_path)
+
+    def fake_run_eval(model, settings, client=None, env=None, progress=None, items=None):
+        return {"run_id": f"20260916-120000-{model}", "model": model, "label": "x", "finished_at": "2026-09-16T12:00:00+00:00",
+                "summary": {"total_cost_usd": 0.0}, "failures": [], "items": []}
+
+    class InlineThread:
+        def __init__(self, target, args=(), daemon=False):
+            self.target, self.args = target, args
+
+        def start(self):
+            self.target(*self.args)
+
+    monkeypatch.setattr(runner, "run_eval", fake_run_eval)
+    monkeypatch.setattr(main, "threading", SimpleNamespace(Thread=InlineThread, Lock=main.threading.Lock))
+    client = TestClient(app)
+    response = client.post("/api/eval/run", json={"model": "claude-haiku-4-5"})
+    assert response.status_code == 202 and response.json() == {"models": ["claude-haiku-4-5"]}
+    state = client.get("/api/eval").json()
+    assert state["running"] is False and state["latest"]["claude-haiku-4-5"]["run_id"] == "20260916-120000-claude-haiku-4-5"
+    assert client.get("/api/eval/20260916-120000-claude-haiku-4-5").status_code == 200
+    assert client.get("/api/cost").json()["last_eval"] == {"claude-haiku-4-5": 0.0}

@@ -72,7 +72,9 @@ page of the settings window, which can also start a run.
 Every service and model response is recorded under `fixtures/`, keyed by the
 request. The recordings of the golden set are committed. The Models page has an
 offline switch that forces replay; in live mode a network failure falls back to
-the recording, the answer says so, and the health dot turns amber.
+the recording, the answer says so, and the health dot turns amber. A question
+without a recording gets a sentence saying so. Changing a prompt or the facts
+shape invalidates the model recordings: run the eval live once to re-record.
 
 ## Settings window
 

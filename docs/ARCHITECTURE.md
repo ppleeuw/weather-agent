@@ -50,8 +50,9 @@ sequenceDiagram
     UI-->>User: answer, meta line, "Open trace"
 ```
 
-Two model calls per request, never more. The budget guardrail would raise at the
-fifth; the pipeline makes at most two.
+Two model calls per request by construction. The budget guardrail allows the
+four the assignment permits and would fail the request at a fifth, so a future
+retry or extra step cannot run away unnoticed.
 
 ## Components: model versus code
 
@@ -141,7 +142,7 @@ decides whether a number means rain.
 | Rejections | English templates from code | Model-phrased in the user's language | One more model call per rejection, and a hostile input shown to a model twice |
 | Settings layout | Centred 960 px modal | 320 px side panel from the first DESIGN.md | Too narrow for the eval table and the trace |
 | Not-found example | Qwxlorbia | Atlantis | Atlantis exists in South Africa and Florida |
-| Eval scoring | Code checks per layer | Model as judge | The assignment forbids it, and code checks are reproducible |
+| Eval scoring | Code checks per layer | Model as judge | Scoring is validation, which the principles assign to code; code checks are reproducible, cost nothing and keep a second model out of the loop |
 | Eval trigger | On demand from the page and the command line | Scheduler | A scheduled eval is not a per-request guardrail |
 
 ## Trace
@@ -161,7 +162,7 @@ memory. The eval saves each item's trace inside its results file.
 | before | input_length | more than 500 characters is answered by a template, no model call |
 | before | rate_limit | more than 60 requests per minute per client is answered by a template |
 | around | registered_tools | a tool name not in the registry is ignored and logged |
-| around | model_call_budget | the fifth model call in one request raises; the counter is shown in every trace |
+| around | model_call_budget | the fifth model call in one request raises and the event is logged as failed; the counter is shown in every trace |
 | after | grounding | a number in the answer that is not within 0.5 of a fact appends "I could not verify this result." and logs which number |
 | after | system_prompt_leak | a whole sentence of either system prompt in the answer blocks it |
 
@@ -173,9 +174,14 @@ their own block above the steps.
 `recording.fetch` keys every service and model request by a hash of its
 canonical JSON and stores the response under `fixtures/<kind>/`. The system
 prompts contain no clock, so the same question hashes to the same key on any
-day. The offline switch on the Models page forces replay. In live mode a network
+day. The other side of that coin: a change to a system prompt, a tool schema or
+the shape of the facts object changes the keys, and the model recordings made
+before it can never be hit again. After such a change, run the eval live once
+to re-record and delete the recordings whose prompt no longer matches. The offline switch on the Models page forces replay. In live mode a network
 failure falls back to the recording when one exists; the step is marked
-replayed, the answer's meta line says so, and the health dot turns amber.
+replayed, the answer's meta line says so, and the health dot turns amber. A
+question that has no recording in offline mode gets its own outcome,
+`no_recording`, with a sentence that says how to proceed.
 
 ## Eval
 

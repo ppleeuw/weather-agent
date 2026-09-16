@@ -37,6 +37,7 @@ TEMPLATES = {
     "input_too_long": "Your question is longer than 500 characters. Please shorten it.",
     "rate_limited": "Too many requests from this client. Wait a minute and try again.",
     "blocked": "I cannot show that answer.",
+    "no_recording": "Offline mode has no recording for this question. Switch offline off, or ask one of the recorded questions.",
     "upstream_error": "The {service} service did not respond. Try again in a moment.",
 }
 
@@ -57,8 +58,8 @@ def template(outcome: str, **values: object) -> str:
 
 
 def suggestions(candidates: list[Candidate]) -> list[str]:
-    """Chip texts for an ambiguous place; each is a complete new question."""
-    return [f"Weather in {place_label(c)}" for c in candidates[:3]]
+    """Chip texts for an ambiguous place; each is a complete new question. geocode.choose has already cut the list to three."""
+    return [f"Weather in {place_label(c)}" for c in candidates]
 
 
 def place_label(candidate: Candidate) -> str:
@@ -67,7 +68,7 @@ def place_label(candidate: Candidate) -> str:
 
 
 def _which(name: str, candidates: list[Candidate]) -> str:
-    labels = [place_label(c) for c in candidates[:3]]
+    labels = [place_label(c) for c in candidates]
     # Semicolons between places, because each label already contains commas.
     if len(labels) > 1:
         listed = "; ".join(labels[:-1]) + "; or " + labels[-1]

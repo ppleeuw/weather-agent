@@ -21,6 +21,10 @@ RATE_LIMIT = 60
 RATE_WINDOW_S = 60
 TOLERANCE = 0.5  # the model may round to the nearest whole number, nothing else
 MIN_SENTENCE_CHARS = 30
+# Numbers in the facts that the answer never speaks: coordinates and the day flag belong
+# to the request, and the model receives the WMO code as words. Leaving them out keeps an
+# invented number from passing by coincidence.
+NOT_SPOKEN = {"latitude", "longitude", "weather_code", "is_day"}
 
 # "12:00" becomes "12" so a time is checked as an hour, not as two numbers.
 TIME_RE = re.compile(r"\b(\d{1,2}):(\d{2})\b")
@@ -98,8 +102,9 @@ def _numbers_in_json(value: object) -> Iterator[float]:
     elif isinstance(value, str):
         yield from _date_parts(value)
     elif isinstance(value, dict):
-        for item in value.values():
-            yield from _numbers_in_json(item)
+        for key, item in value.items():
+            if key not in NOT_SPOKEN:
+                yield from _numbers_in_json(item)
     elif isinstance(value, list):
         for item in value:
             yield from _numbers_in_json(item)

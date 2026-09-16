@@ -38,3 +38,10 @@ def test_cache_returns_the_same_report():
     first = health.check_all(ENV, client_answering(lambda host: 200), offline=False, use_cache=False)
     second = health.check_all({}, client_answering(lambda host: 500), offline=False)
     assert second is first
+
+
+def test_no_recordings_is_degraded(monkeypatch, tmp_path):
+    monkeypatch.setattr(health.recording, "FIXTURES", tmp_path)
+    report = health.check_all(ENV, client_answering(lambda host: 200), offline=False, use_cache=False)
+    assert report["status"] == "degraded"
+    assert not next(c for c in report["checks"] if c["name"] == "recordings")["ok"]

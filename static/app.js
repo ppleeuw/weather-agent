@@ -74,12 +74,23 @@ function renderResponse(body) {
 }
 
 // "mistral-medium-latest · 1.8 s · $0.0021 · Open trace", then the replay notice when there is one.
+// When the two model steps ran on different models, both are named.
 function renderMeta(body) {
-  const figures = [body.model, formatLatency(body.latency_ms), formatCost(body.cost_usd)];
+  const figures = [modelNames(body.models), formatLatency(body.latency_ms), formatCost(body.cost_usd)];
   metaLine.replaceChildren(figures.join(" · ") + " · ", traceLink(body.trace_id));
   if (body.notice) {
     metaLine.append(" · " + body.notice);
   }
+}
+
+function modelNames(models) {
+  if (!models) {
+    return "";
+  }
+  if (models.understand === models.answer) {
+    return models.understand;
+  }
+  return models.understand + " + " + models.answer;
 }
 
 function traceLink(traceId) {

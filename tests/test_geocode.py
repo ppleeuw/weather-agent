@@ -30,16 +30,16 @@ def test_paris_texas_uses_the_region_filter():
 
 def test_springfield_is_ambiguous_with_three_suggestions():
     sel = geocode.choose(load("geocode_springfield.json"), "Springfield", None, None)
-    assert sel.outcome == "ambiguous" and len(sel.candidates) == 3
+    assert sel.outcome == "place_ambiguous" and len(sel.candidates) == 3
     assert all(c.name.lower() == "springfield" for c in sel.candidates)
 
 
 def test_empty_results_are_not_found():
-    assert geocode.choose(load("geocode_empty.json"), "Qwxlorbia", None, None).outcome == "not_found"
+    assert geocode.choose(load("geocode_empty.json"), "Qwxlorbia", None, None).outcome == "place_not_found"
 
 
 def test_region_filter_with_no_match_is_not_found():
-    assert geocode.choose(load("geocode_paris.json"), "Paris", "Bavaria", None).outcome == "not_found"
+    assert geocode.choose(load("geocode_paris.json"), "Paris", "Bavaria", None).outcome == "place_not_found"
 
 
 def test_country_filter_accepts_code_or_name():
@@ -50,7 +50,7 @@ def test_country_filter_accepts_code_or_name():
 
 def test_non_populated_places_are_dropped():
     cands = [geocode.Candidate("Atlantis", "", "Italy", "IT", 0, 0, "Europe/Rome", 0, "AMUS")]
-    assert geocode.choose(cands, "Atlantis", None, None).outcome == "not_found"
+    assert geocode.choose(cands, "Atlantis", None, None).outcome == "place_not_found"
 
 
 def test_build_request_shape():

@@ -14,6 +14,7 @@ import httpx
 from weather_agent import recording
 
 GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
+TIMEOUT_S = 10  # Open-Meteo answers in well under a second; ten seconds covers a slow link
 # A runner-up with at least half the top population makes the name ambiguous.
 AMBIGUITY_RATIO = 0.5
 # How many places the user is offered when the name is ambiguous.
@@ -39,7 +40,7 @@ class Candidate:
 class Selection:
     """What the selection rule decided: one place, a shortlist, or nothing."""
 
-    outcome: str  # "place" | "ambiguous" | "not_found"
+    outcome: str  # "place" | "place_ambiguous" | "place_not_found", the trace uses the same words
     place: Candidate | None = None
     candidates: list[Candidate] = field(default_factory=list)
 
@@ -55,7 +56,7 @@ def search(name: str, offline: bool, client: httpx.Client) -> tuple[dict, list[C
     request = build_request(name)
 
     def live() -> dict:
-        response = client.get(request["url"], params=request["params"], timeout=10)
+        response = client.get(request["url"], params=request["params"], timeout=TIMEOUT_S)
         # A 400 from Open-Meteo raises httpx.HTTPStatusError; the pipeline maps it.
         response.raise_for_status()
         return response.json()
@@ -95,9 +96,9 @@ def choose(
     remaining = merge_duplicates(remaining)
     remaining.sort(key=lambda candidate: candidate.population, reverse=True)
     if not remaining:
-        return Selection("not_found")
+        return Selection("place_not_found")
     if is_ambiguous(remaining):
-        return Selection("ambiguous", candidates=remaining[:SUGGESTIONS])
+        return Selection("place_ambiguous", candidates=remaining[:SUGGESTIONS])
     return Selection("place", place=remaining[0])
 
 

@@ -13,7 +13,7 @@
  "response": {
   "latitude": 52.096,
   "longitude": 5.133,
-  "generationtime_ms": 0.2644062042236328,
+  "generationtime_ms": 0.2181529998779297,
   "utc_offset_seconds": 7200,
   "timezone": "Europe/Amsterdam",
   "timezone_abbreviation": "GMT+2",
@@ -31,15 +31,15 @@
    "is_day": ""
   },
   "current": {
-   "time": "2026-09-16T12:30",
+   "time": "2026-09-16T13:15",
    "interval": 900,
-   "temperature_2m": 16.6,
-   "apparent_temperature": 15.4,
-   "relative_humidity_2m": 83,
-   "precipitation": 0.1,
-   "weather_code": 51,
-   "wind_speed_10m": 16.6,
-   "wind_gusts_10m": 33.1,
+   "temperature_2m": 17.7,
+   "apparent_temperature": 16.3,
+   "relative_humidity_2m": 75,
+   "precipitation": 0.4,
+   "weather_code": 61,
+   "wind_speed_10m": 16.9,
+   "wind_gusts_10m": 31.7,
    "is_day": 1
   },
   "daily_units": {
@@ -71,5 +71,5 @@
    ]
   }
  },
- "recorded_at": "2026-09-16T10:41:58+00:00"
+ "recorded_at": "2026-09-16T11:27:37+00:00"
 }

@@ -12,7 +12,7 @@
  "response": {
   "latitude": 51.51147,
   "longitude": -0.13078308,
-  "generationtime_ms": 1.2636184692382812,
+  "generationtime_ms": 1.2009143829345703,
   "utc_offset_seconds": 3600,
   "timezone": "Europe/London",
   "timezone_abbreviation": "GMT+1",
@@ -84,20 +84,20 @@
    ],
    "precipitation_probability_max": [
     24,
-    73,
-    27,
-    39,
-    11,
-    0,
-    2,
-    0,
-    4,
-    6,
-    6,
-    16,
+    86,
     20,
-    22,
-    null,
+    43,
+    13,
+    2,
+    2,
+    3,
+    4,
+    4,
+    14,
+    13,
+    13,
+    18,
+    16,
     null
    ],
    "precipitation_sum": [
@@ -174,5 +174,5 @@
    ]
   }
  },
- "recorded_at": "2026-09-16T10:41:35+00:00"
+ "recorded_at": "2026-09-16T11:27:14+00:00"
 }

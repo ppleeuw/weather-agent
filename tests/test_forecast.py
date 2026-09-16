@@ -1,11 +1,10 @@
-# tests/test_forecast.py
 import json
 from datetime import date
 from pathlib import Path
 import httpx
 import pytest
 
-from weather_agent import forecast, recording
+from weather_agent import forecast, recording, verdicts
 from weather_agent.geocode import Candidate
 
 FIX = Path(__file__).parent / "fixtures"
@@ -70,7 +69,7 @@ def test_facts_daily_rows_carry_weekday_and_verdicts():
     assert f["verdicts"]["rain"] in {"yes", "unlikely", "no"}
 
 def test_rain_verdict_thresholds():
-    assert forecast.rain_verdict(50) == "yes" and forecast.rain_verdict(49) == "unlikely" and forecast.rain_verdict(19) == "no"
+    assert verdicts.rain_verdict(50) == "yes" and verdicts.rain_verdict(49) == "unlikely" and verdicts.rain_verdict(19) == "no"
 
 
 # Added beyond the plan: behaviour seen in the saved fixtures that the plan's tests do not pin down.
@@ -111,13 +110,13 @@ def test_month_not_containing_today_is_out_of_range():
 def test_precheck_window_edges():
     today = date(2026, 9, 16)
     forecast.precheck(forecast.When("date", date="2026-09-15"), today)  # yesterday: local date may lag
-    forecast.precheck(forecast.When("date", date="2026-10-01"), today)  # today + 15
-    for text in ("2026-09-14", "2026-10-02"):
+    forecast.precheck(forecast.When("date", date="2026-10-02"), today)  # today + 16: a local date may lead the server
+    for text in ("2026-09-14", "2026-10-03"):
         with pytest.raises(forecast.DateOutOfRange):
             forecast.precheck(forecast.When("date", date=text), today)
-    for days in (0, 16):
-        with pytest.raises(ValueError):
-            forecast.precheck(forecast.When("in_days", days=days), today)
+    forecast.precheck(forecast.When("in_days", days=15), today)
+    with pytest.raises(forecast.DateOutOfRange):
+        forecast.precheck(forecast.When("in_days", days=16), today)
 
 def test_facts_leave_the_raw_response_untouched():
     r = raw("forecast_paris_now.json")
@@ -160,11 +159,26 @@ def test_precheck_rejects_month_outside_yesterday_to_tomorrow():
     forecast.precheck(forecast.When("date", date="2026-09"), date(2026, 9, 16))
 
 
-def test_precheck_raises_value_error_for_missing_fields():
-    with pytest.raises(ValueError):
-        forecast.precheck(forecast.When("date"), date(2026, 9, 16))
-    with pytest.raises(ValueError):
-        forecast.precheck(forecast.When("period"), date(2026, 9, 16))
+def test_precheck_rejects_a_date_it_cannot_read_and_a_far_period():
+    with pytest.raises(forecast.DateOutOfRange) as caught:
+        forecast.precheck(forecast.When("date", date="January 1950"), date(2026, 9, 16))
+    assert caught.value.date == "January 1950"
+    with pytest.raises(forecast.DateOutOfRange) as caught:
+        forecast.precheck(forecast.When("period", days=30), date(2026, 9, 16))
+    assert caught.value.date == "the next 30 days"
+
+
+def test_night_belongs_to_the_coming_night():
+    r = raw("forecast_london_hourly.json")
+    res = forecast.resolve(forecast.When("today", part_of_day="night"), r)
+    assert res["hours"] == [0, 1, 2, 3, 4, 5, 6] and res["hourly_day"] == r["daily"]["time"][1]
+    f = forecast.facts(PARIS, forecast.When("today", part_of_day="night"), r)
+    assert f["hourly"] and f["hourly"][0]["time"].startswith(r["daily"]["time"][1])
+
+
+def test_resolved_when_carries_the_day_count():
+    r = raw("forecast_paris_daily.json")
+    assert forecast.resolve(forecast.When("in_days", days=5), r)["days"] == 5
 
 
 def test_weekday_names_are_english_and_fixed():

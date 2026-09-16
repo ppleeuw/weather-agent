@@ -6,7 +6,7 @@ Thinking blocks may appear in the content; they carry no text here and are ignor
 """
 from __future__ import annotations
 
-from weather_agent.providers.types import Model, ToolCall
+from weather_agent.providers.types import MAX_TOKENS, Model, ProviderError, ToolCall
 
 URL = "https://api.anthropic.com/v1/messages"
 API_VERSION = "2023-06-01"
@@ -17,7 +17,7 @@ def build_request(model: Model, system: str, user_text: str, tools: list[dict] |
     headers = {"x-api-key": api_key, "anthropic-version": API_VERSION, "content-type": "application/json"}
     body: dict = {
         "model": model.id,
-        "max_tokens": 1024,
+        "max_tokens": MAX_TOKENS,
         "system": system,
         "messages": [{"role": "user", "content": user_text}],
     }
@@ -36,6 +36,9 @@ def parse_response(raw: dict) -> tuple[str, list[ToolCall], int, int, str]:
         if block["type"] == "text":
             texts.append(block["text"])
         elif block["type"] == "tool_use":
-            calls.append(ToolCall(block["id"], block["name"], dict(block.get("input") or {})))
+            arguments = block.get("input") or {}
+            if not isinstance(arguments, dict):
+                raise ProviderError(200, f"tool_use input is not an object: {str(arguments)[:100]}")
+            calls.append(ToolCall(block["id"], block["name"], arguments))
     usage = raw.get("usage", {})
     return "".join(texts), calls, usage.get("input_tokens", 0), usage.get("output_tokens", 0), raw.get("stop_reason", "")

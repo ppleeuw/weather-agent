@@ -1,0 +1,47 @@
+{
+ "request": {
+  "provider": "mistral",
+  "url": "https://api.mistral.ai/v1/chat/completions",
+  "body": {
+   "model": "mistral-medium-latest",
+   "messages": [
+    {
+     "role": "system",
+     "content": "You phrase weather facts for the user. Use only the values in the facts; add no other knowledge and no advice beyond the verdicts.\nWrite one or two sentences. Lead with the key number and its unit exactly as given, then add the one or two facts that matter for the question: the sky, the wind, the rain probability in percent, the temperature range. A short remark on how it feels is welcome, without new numbers.\nWhen the facts contain a verdict, start with yes, no or unlikely and give the number that belongs to it: the rain probability in percent, the wind speed in km/h, or the snow days.\nAnswer entirely in the language of the question. Name the place. For current conditions, say that this is the weather right now. Name a day by its weekday and date in words, never as an ISO date."
+    },
+    {
+     "role": "user",
+     "content": "Question: Hey, how cold is it in Paris?\nFacts: {\"place\": {\"name\": \"Paris\", \"admin1\": \"Île-de-France Region\", \"country\": \"France\", \"country_code\": \"FR\", \"latitude\": 48.85341, \"longitude\": 2.3488, \"timezone\": \"Europe/Paris\"}, \"today\": \"2026-09-16\", \"when\": {\"kind\": \"now\", \"label\": \"now\", \"dates\": [\"2026-09-16\"], \"hours\": null, \"hourly_day\": \"2026-09-16\", \"days\": null}, \"current\": {\"time\": \"2026-09-16T13:15\", \"interval\": 900, \"temperature_2m\": 20.3, \"apparent_temperature\": 19.1, \"relative_humidity_2m\": 54, \"precipitation\": 0.0, \"weather_code\": 2, \"wind_speed_10m\": 9.9, \"wind_gusts_10m\": 25.2, \"is_day\": 1, \"weather\": \"partly cloudy\"}, \"daily\": [{\"date\": \"2026-09-16\", \"weekday\": \"Wednesday\", \"temperature_2m_max\": 22.5, \"temperature_2m_min\": 14.7, \"precipitation_probability_max\": 0, \"precipitation_sum\": 0.2, \"weather_code\": 80, \"weather\": \"slight rain showers\"}], \"hourly\": [], \"units\": {\"temperature\": \"°C\", \"wind_speed\": \"km/h\", \"precipitation\": \"mm\", \"snowfall\": \"cm\", \"probability\": \"%\"}, \"verdicts\": {}}"
+    }
+   ],
+   "max_tokens": 1024
+  }
+ },
+ "response": {
+  "id": "94fdf05cbbb742d189f9f473c4930062",
+  "created": 1789558042,
+  "model": "mistral-medium-latest",
+  "usage": {
+   "prompt_tokens": 614,
+   "total_tokens": 634,
+   "completion_tokens": 20,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "service_tier": "standard"
+  },
+  "object": "chat.completion",
+  "choices": [
+   {
+    "index": 0,
+    "finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "tool_calls": null,
+     "content": "20.3 °C in Paris right now, partly cloudy with a light breeze."
+    }
+   }
+  ]
+ },
+ "recorded_at": "2026-09-16T11:27:23+00:00"
+}

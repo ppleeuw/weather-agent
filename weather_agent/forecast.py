@@ -9,6 +9,7 @@ already validated the values in `When`.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 
@@ -16,14 +17,13 @@ import httpx
 
 from weather_agent import recording
 from weather_agent.geocode import Candidate
-from weather_agent.verdicts import RAIN_UNLIKELY, RAIN_YES, WINDY_KMH, WMO_CODES, rain_verdict, verdicts, weather_words
-
-__all__ = ["When", "DateOutOfRange", "precheck", "build_request", "fetch", "resolve", "facts", "label",
-           "weekday_name", "RAIN_YES", "RAIN_UNLIKELY", "WINDY_KMH", "WMO_CODES", "rain_verdict", "verdicts"]
+from weather_agent.verdicts import verdicts, weather_words
 
 FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
+TIMEOUT_S = 10  # Open-Meteo answers in well under a second; ten seconds covers a slow link
 FORECAST_DAYS = 16  # the most Open-Meteo serves
 MAX_DAYS = 15  # the last day index the user can ask for
+DATE_RE = re.compile(r"^\d{4}(-\d{2}(-\d{2})?)?$")  # YYYY, YYYY-MM or YYYY-MM-DD
 
 # Variable names from https://open-meteo.com/en/docs. A "now" question also gets
 # today's range (NOW_DAILY_VARS) so the answer can give context.
@@ -66,20 +66,36 @@ class DateOutOfRange(Exception):
 
 
 def precheck(when: When, today: date) -> None:
-    """Reject, before any network call, what a sixteen-day forecast can never cover."""
+    """Reject, before any network call, what a sixteen-day forecast can never cover.
+
+    The understand step has checked types and enums; this is the one place that
+    decides whether the asked time is in reach.
+    """
     if when.kind == "date":
-        if not when.date:
-            raise ValueError("kind date needs a date")
-        # Local dates differ from the server date by at most a day, so yesterday
-        # through today + 15 is the widest window for a full date. A month or a
-        # year only passes when it contains today, so its window is yesterday
-        # through tomorrow.
-        offsets = range(-1, 2) if len(when.date) < 10 else range(-1, MAX_DAYS + 1)
+        if not _readable_date(when.date):
+            raise DateOutOfRange(when.date)  # not a date this app can read, so not one it can serve
+        # Local dates differ from the server date by at most a day, so yesterday through
+        # today + 16 is the widest window for a full date; resolve() does the exact check
+        # on the dates the service returns. A month or a year only passes when it
+        # contains today, so its window is yesterday through tomorrow.
+        offsets = range(-1, 2) if len(when.date) < 10 else range(-1, FORECAST_DAYS + 1)
         window = [today + timedelta(days=offset) for offset in offsets]
         if not any(day.isoformat().startswith(when.date) for day in window):
             raise DateOutOfRange(when.date)
-    if when.kind in ("in_days", "period") and (when.days is None or not 1 <= when.days <= MAX_DAYS):
-        raise ValueError(f"days must be between 1 and {MAX_DAYS}, got {when.days}")
+    if when.kind in ("in_days", "period") and when.days > MAX_DAYS:
+        raise DateOutOfRange(label(when))
+
+
+def _readable_date(text: str) -> bool:
+    """True for a real date written as YYYY, YYYY-MM or YYYY-MM-DD."""
+    if not DATE_RE.match(text):
+        return False
+    parts = [int(p) for p in text.split("-")]
+    try:
+        date(parts[0], parts[1] if len(parts) > 1 else 1, parts[2] if len(parts) > 2 else 1)
+    except ValueError:
+        return False
+    return True
 
 
 def build_request(place: Candidate, when: When) -> dict:
@@ -102,7 +118,7 @@ def fetch(place: Candidate, when: When, offline: bool, client: httpx.Client) -> 
     request = build_request(place, when)
 
     def live() -> dict:
-        response = client.get(request["url"], params=request["params"], timeout=10)
+        response = client.get(request["url"], params=request["params"], timeout=TIMEOUT_S)
         response.raise_for_status()  # a 400 from Open-Meteo raises here; the pipeline maps it
         return response.json()
 
@@ -128,10 +144,19 @@ def resolve(when: When, raw: dict) -> dict:
     else:  # now and today
         dates = [times[0]]
     hours = None
+    hourly_day = dates[0]
     if when.part_of_day:
         start, end = PART_OF_DAY_HOURS[when.part_of_day]
         hours = [hour for hour in range(start, end + 1) if hour < 24]
-    return {"kind": when.kind, "label": label(when), "dates": dates, "hours": hours}
+        if when.part_of_day == "night":
+            # "Tonight" is the night that starts today, so its small hours belong to the next date.
+            hourly_day = _day_after(dates[0], times)
+    return {"kind": when.kind, "label": label(when), "dates": dates, "hours": hours, "hourly_day": hourly_day, "days": when.days}
+
+
+def _day_after(day: str, times: list[str]) -> str | None:
+    index = times.index(day) + 1
+    return times[index] if index < len(times) else None
 
 
 def _first_weekday(weekday: str, times: list[str]) -> str:
@@ -181,7 +206,7 @@ def facts(place: Candidate, when: When, raw: dict) -> dict:
         current = dict(raw["current"])  # a copy: the raw response in the trace stays as received
         current["weather"] = weather_words(current["weather_code"])
     daily = [_daily_row(raw["daily"], day) for day in resolved["dates"]]
-    hourly = _hourly_rows(raw, resolved["dates"][0], resolved["hours"])
+    hourly = _hourly_rows(raw, resolved["hourly_day"], resolved["hours"])
     return {
         "place": {"name": place.name, "admin1": place.admin1, "country": place.country,
                   "country_code": place.country_code, "latitude": place.latitude,
@@ -211,9 +236,9 @@ def _daily_row(daily: dict, day: str) -> dict:
     return row
 
 
-def _hourly_rows(raw: dict, day: str, hours: list[int] | None) -> list[dict]:
+def _hourly_rows(raw: dict, day: str | None, hours: list[int] | None) -> list[dict]:
     """The rows of one day inside the asked hour window; [] when no part of day was asked."""
-    if hours is None or "hourly" not in raw:
+    if hours is None or day is None or "hourly" not in raw:
         return []
     times: list[str] = raw["hourly"]["time"]
     wanted = [f"{day}T{hour:02d}:00" for hour in hours]

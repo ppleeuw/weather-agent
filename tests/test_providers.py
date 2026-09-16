@@ -73,3 +73,15 @@ def test_missing_key_raises_before_any_call():
     with pytest.raises(providers.ProviderError) as e:
         providers.call_model("mistral-small-latest", "s", "u", None, providers.CallBudget(), False, client, {})
     assert "MISTRAL_API_KEY" in e.value.body
+
+
+def test_mistral_rejects_arguments_that_are_not_an_object():
+    raw = {"choices": [{"message": {"content": None, "tool_calls": [{"id": "x", "function": {"name": "f", "arguments": "[1, 2]"}}]}, "finish_reason": "stop"}], "usage": {}}
+    with pytest.raises(providers.ProviderError):
+        mistral.parse_response(raw)
+
+
+def test_anthropic_rejects_tool_input_that_is_not_an_object():
+    raw = {"content": [{"type": "tool_use", "id": "t1", "name": "f", "input": ["Paris"]}], "stop_reason": "tool_use", "usage": {}}
+    with pytest.raises(providers.ProviderError):
+        anthropic.parse_response(raw)

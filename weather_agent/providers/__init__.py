@@ -13,7 +13,7 @@ import httpx
 
 from weather_agent import recording
 from weather_agent.providers import anthropic, mistral
-from weather_agent.providers.types import BudgetExceeded, CallBudget, Model, ModelResponse, ProviderError, ToolCall
+from weather_agent.providers.types import MODEL_TIMEOUT_S, BudgetExceeded, CallBudget, Model, ModelResponse, ProviderError, ToolCall
 
 __all__ = ["MODELS", "BudgetExceeded", "CallBudget", "Model", "ModelResponse", "ProviderError", "ToolCall", "call_model"]
 
@@ -52,7 +52,7 @@ def call_model(
     request = {"provider": model.provider, "url": url, "body": body}
 
     def live() -> dict:
-        response = client.post(url, headers=headers, json=body, timeout=60)
+        response = client.post(url, headers=headers, json=body, timeout=MODEL_TIMEOUT_S)
         if response.status_code >= 400:
             raise ProviderError(response.status_code, response.text)
         return response.json()

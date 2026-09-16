@@ -17,7 +17,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from weather_agent import VERSION, config, health, pricing, trace
+from weather_agent import VERSION, config, health, pipeline, pricing, providers, trace
 from weather_agent.eval import runner
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
@@ -34,14 +34,15 @@ class EvalBody(BaseModel):
     model: str  # a model id, or "all"
 
 
-# One eval run at a time; the page polls this while it runs.
+# One eval run at a time; the page polls this while it runs. The lock makes "is one
+# running?" and "now one is running" a single step, because FastAPI serves this sync
+# route from several threads at once.
 eval_state: dict = {"running": False, "done": 0, "total": 0, "model": ""}
+eval_lock = threading.Lock()
 
 
 @app.post("/api/ask")
 def ask(body: AskBody, request: Request) -> dict:
-    from weather_agent import pipeline  # imported here so the routes above stay importable in isolation
-
     client_id = request.client.host if request.client else "unknown"
     t = pipeline.run(body.question, config.current_settings(), client_id, client=app.state.client)
     return {
@@ -54,7 +55,7 @@ def ask(body: AskBody, request: Request) -> dict:
         "latency_ms": t.totals.latency_ms,
         "cost_usd": t.totals.cost_usd,
         "error": t.error,
-        "model": t.settings.get("understand", ""),
+        "models": {"understand": t.settings["understand"], "answer": t.settings["answer"]},
     }
 
 
@@ -98,7 +99,7 @@ def get_health() -> dict:
 def get_cost() -> dict:
     latest = trace.STORE.latest()
     return {
-        "prices": [{"model": model_id, **price} for model_id, price in pricing.PRICES.items()],
+        "prices": [{"model": model_id, "label": providers.MODELS[model_id].label, **price} for model_id, price in pricing.PRICES.items()],
         "checked_on": pricing.CHECKED_ON,
         "last_request": _cost_of(latest) if latest else None,
         "session_total_usd": trace.STORE.session_cost(),
@@ -108,15 +109,16 @@ def get_cost() -> dict:
 
 @app.post("/api/eval/run", status_code=202)
 def start_eval(body: EvalBody) -> JSONResponse:
-    if eval_state["running"]:
-        return JSONResponse({"error": "An eval run is already in progress."}, status_code=409)
+    """Start a run in a background thread. The page polls GET /api/eval for progress and results."""
     models = list(config.OPTIONS["understand"]) if body.model == "all" else [body.model]
     if any(model not in config.OPTIONS["understand"] for model in models):
         return JSONResponse({"error": f"unknown model {body.model!r}"}, status_code=400)
-    run_id = f"batch-{trace.now_iso()}"
-    eval_state.update(running=True, done=0, total=len(models) * len(runner.GOLDEN), model=models[0])
+    with eval_lock:
+        if eval_state["running"]:
+            return JSONResponse({"error": "An eval run is already in progress."}, status_code=409)
+        eval_state.update(running=True, done=0, total=len(models) * len(runner.GOLDEN), model=models[0])
     threading.Thread(target=_run_eval_models, args=(models,), daemon=True).start()
-    return JSONResponse({"run_id": run_id}, status_code=202)
+    return JSONResponse({"models": models}, status_code=202)
 
 
 @app.get("/api/eval")

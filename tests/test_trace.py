@@ -5,9 +5,10 @@ def test_finish_sums_steps_and_counts_model_calls():
     t = trace.new_trace("q", "client", {})
     t.add_step(trace.Step("understand", "model", "m", trace.now_iso(), latency_ms=100, input_tokens=10, output_tokens=5, cost_usd=0.001))
     t.add_step(trace.Step("geocode", "service", "open-meteo-geocoding", trace.now_iso(), latency_ms=50))
-    t.add_step(trace.Step("answer", "model", "m", trace.now_iso(), source="skipped"))
+    t.add_step(trace.Step("answer", "model", "m", trace.now_iso(), source="skipped", error="no recording"))
     t.finish()
-    assert t.totals.latency_ms == 150 and t.totals.model_calls == 1 and t.totals.input_tokens == 10
+    # Every model step counts, a failed attempt included, so the total matches the budget guardrail.
+    assert t.totals.latency_ms == 150 and t.totals.model_calls == 2 and t.totals.input_tokens == 10
 
 
 def test_store_keeps_latest_and_lookup():

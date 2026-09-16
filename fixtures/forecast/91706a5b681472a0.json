@@ -12,7 +12,7 @@
  "response": {
   "latitude": 55.6785,
   "longitude": 12.570435,
-  "generationtime_ms": 0.6355047225952148,
+  "generationtime_ms": 0.507354736328125,
   "utc_offset_seconds": 7200,
   "timezone": "Europe/Copenhagen",
   "timezone_abbreviation": "GMT+2",
@@ -47,8 +47,8 @@
     "2026-10-01"
    ],
    "temperature_2m_max": [
-    18.7,
-    17.5,
+    18.5,
+    17.4,
     17.9,
     17.8,
     16.9,
@@ -66,7 +66,7 @@
    ],
    "temperature_2m_min": [
     14.7,
-    12.5,
+    12.4,
     14.1,
     14.1,
     12.8,
@@ -84,20 +84,20 @@
    ],
    "precipitation_probability_max": [
     100,
-    82,
-    80,
-    60,
-    72,
-    24,
-    4,
-    14,
+    96,
+    87,
+    52,
+    76,
+    31,
     8,
-    10,
-    18,
-    14,
+    16,
     16,
     20,
-    null,
+    18,
+    16,
+    14,
+    14,
+    27,
     null
    ],
    "precipitation_sum": [
@@ -174,5 +174,5 @@
    ]
   }
  },
- "recorded_at": "2026-09-16T10:41:49+00:00"
+ "recorded_at": "2026-09-16T11:27:28+00:00"
 }

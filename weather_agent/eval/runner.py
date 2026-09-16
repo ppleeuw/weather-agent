@@ -42,7 +42,8 @@ def run_eval(
     run_id = f"{started_at.strftime('%Y%m%d-%H%M%S')}-{model_id}"
     results = []
     for number, item in enumerate(golden, start=1):
-        trace = pipeline.run(item.question, under_test, client_id=f"eval-{uuid4().hex[:8]}", client=client, env=env)
+        # keep=False: sixty eval traces must not push the user's own traces out of the store
+        trace = pipeline.run(item.question, under_test, client_id=f"eval-{uuid4().hex[:8]}", client=client, env=env, keep=False)
         layers = checks.check_item(item, trace)
         results.append({
             "id": item.id,

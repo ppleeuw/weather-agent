@@ -90,8 +90,8 @@ class Trace:
             totals.cost_usd += step.cost_usd
             totals.input_tokens += step.input_tokens
             totals.output_tokens += step.output_tokens
-            if step.kind == "model" and step.source != "skipped":
-                totals.model_calls += 1
+            if step.kind == "model":
+                totals.model_calls += 1  # attempts, a failed call included, so it matches the budget guardrail
         totals.cost_usd = round(totals.cost_usd, 6)
         self.totals = totals
 

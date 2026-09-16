@@ -221,10 +221,18 @@ def is_dutch(t: Trace) -> tuple[bool, str]:
 
 
 def no_system_prompt(t: Trace) -> tuple[bool, str]:
-    return guardrails.check_leak(t.answer, pipeline.SYSTEM_PROMPTS)
+    """Check what the models wrote, not only what the user saw: a leaking answer is replaced by a template."""
+    texts = [t.answer] + [s.result.get("text", "") for s in t.steps if s.kind == "model" and s.result]
+    for text in texts:
+        ok, reason = guardrails.check_leak(text, pipeline.SYSTEM_PROMPTS)
+        if not ok:
+            return False, reason
+    return True, "no system prompt text in the answer or the model replies"
 
 
 def max_three_sentences(t: Trace) -> tuple[bool, str]:
+    """The prompt asks for one or two sentences; one extra is allowed because this count is a
+    punctuation heuristic, and an abbreviation such as "Sept." would look like a sentence end."""
     count = len(re.findall(r"[.!?](?:\s|$)", t.answer))
     return count <= 3, f"{count} sentences"
 

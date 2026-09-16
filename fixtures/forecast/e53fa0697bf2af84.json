@@ -12,7 +12,7 @@
  "response": {
   "latitude": 40.710335,
   "longitude": -73.99308,
-  "generationtime_ms": 0.7795095443725586,
+  "generationtime_ms": 1.2744665145874023,
   "utc_offset_seconds": -14400,
   "timezone": "America/New_York",
   "timezone_abbreviation": "GMT-4",
@@ -47,7 +47,7 @@
     "2026-10-01"
    ],
    "temperature_2m_max": [
-    26.1,
+    26.4,
     29.0,
     28.2,
     19.9,
@@ -65,7 +65,7 @@
     null
    ],
    "temperature_2m_min": [
-    15.1,
+    15.3,
     18.9,
     20.7,
     15.3,
@@ -83,7 +83,7 @@
     null
    ],
    "precipitation_probability_max": [
-    4,
+    5,
     26,
     26,
     5,
@@ -155,7 +155,7 @@
     null
    ],
    "wind_speed_10m_max": [
-    13.4,
+    14.4,
     17.4,
     24.0,
     21.1,
@@ -174,5 +174,5 @@
    ]
   }
  },
- "recorded_at": "2026-09-16T10:41:44+00:00"
+ "recorded_at": "2026-09-16T11:27:24+00:00"
 }

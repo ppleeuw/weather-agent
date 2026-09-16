@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 
-from weather_agent.providers.types import Model, ToolCall
+from weather_agent.providers.types import MAX_TOKENS, Model, ProviderError, ToolCall
 
 URL = "https://api.mistral.ai/v1/chat/completions"
 
@@ -22,7 +22,7 @@ def build_request(model: Model, system: str, user_text: str, tools: list[dict] |
             {"role": "system", "content": system},
             {"role": "user", "content": user_text},
         ],
-        "max_tokens": 1024,
+        "max_tokens": MAX_TOKENS,
     }
     if tools:
         body["tools"] = [
@@ -56,6 +56,14 @@ def _text(content: str | list | None) -> str:
 
 
 def _arguments(value: str | dict | None) -> dict:
-    if isinstance(value, str):
-        return json.loads(value) if value else {}
-    return dict(value or {})
+    """The model's arguments as a dict. Anything else is a provider error, never a crash."""
+    if isinstance(value, str) and value:
+        try:
+            value = json.loads(value)
+        except json.JSONDecodeError as exc:
+            raise ProviderError(200, f"tool call arguments are not valid JSON: {value[:100]}") from exc
+    if value is None or value == "":
+        return {}
+    if not isinstance(value, dict):
+        raise ProviderError(200, f"tool call arguments are not a JSON object: {str(value)[:100]}")
+    return value

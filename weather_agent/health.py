@@ -79,16 +79,17 @@ def _ping(name: str, url: str, provider: str | None, env: dict, client: httpx.Cl
 
 
 def _auth_headers(provider: str | None, env: dict) -> dict:
+    if provider is None:
+        return {}
+    key = env.get(KEY_NAMES[provider], "")
     if provider == "mistral":
-        return {"Authorization": f"Bearer {env.get('MISTRAL_API_KEY', '')}"}
-    if provider == "anthropic":
-        return {"x-api-key": env.get("ANTHROPIC_API_KEY", ""), "anthropic-version": anthropic.API_VERSION}
-    return {}
+        return {"Authorization": f"Bearer {key}"}
+    return {"x-api-key": key, "anthropic-version": anthropic.API_VERSION}
 
 
 def _recordings_check() -> Check:
     count = recording.count()
-    return Check("recordings", True, 0, f"{count} recorded responses available for offline replay")
+    return Check("recordings", count > 0, 0, f"{count} recorded responses on disk for offline replay")
 
 
 def _status(checks: list[Check]) -> str:

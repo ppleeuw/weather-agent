@@ -104,3 +104,29 @@ def test_offline_replays_after_one_live_run(tmp_path, monkeypatch):
     dead = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(500)))
     t = pipeline.run("How warm is it in Paris?", offline, "test", client=dead, env={})
     assert t.outcome == "weather" and all(s.source == "replayed" for s in t.steps) and "Replayed" in t.notice
+
+
+def test_offline_without_recording_is_a_friendly_outcome(tmp_path, monkeypatch):
+    monkeypatch.setattr(pipeline.recording, "FIXTURES", tmp_path)
+    offline = config.Settings("mistral-medium-latest", "open-meteo-geocoding", "open-meteo-forecast", "mistral-medium-latest", True)
+    dead = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(500)))
+    t = pipeline.run("How warm is it in Paris?", offline, "test", client=dead, env={})
+    assert t.outcome == "no_recording" and "recording" in t.answer and t.error == ""
+    assert t.steps[0].name == "understand" and t.steps[0].source == "skipped" and t.steps[0].handler == "mistral-medium-latest"
+    assert t.totals.model_calls == 1 and t.error_detail.startswith("NoRecording")
+
+
+def test_malformed_tool_arguments_become_an_upstream_error(tmp_path, monkeypatch):
+    monkeypatch.setattr(pipeline.recording, "FIXTURES", tmp_path)
+    broken = {"choices": [{"message": {"content": None, "tool_calls": [{"id": "x", "function": {"name": "lookup_place", "arguments": "not json"}}]}, "finish_reason": "tool_calls"}], "usage": {}}
+    client = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200, json=broken)))
+    t = pipeline.run("How warm is it in Paris?", settings(), "test", client=client, env=ENV)
+    assert t.outcome == "upstream_error" and "not valid JSON" in t.error_detail
+
+
+def test_eval_traces_can_stay_out_of_the_store(tmp_path, monkeypatch):
+    monkeypatch.setattr(pipeline.recording, "FIXTURES", tmp_path)
+    before = pipeline.trace.STORE.latest()
+    client, _ = make_client("It is 14 °C in Paris right now.")
+    pipeline.run("How warm is it in Paris?", settings(), "test", client=client, env=ENV, keep=False)
+    assert pipeline.trace.STORE.latest() is before

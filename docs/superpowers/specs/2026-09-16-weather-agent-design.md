@@ -189,6 +189,12 @@ Facts object handed to step 4 and to the grounding check:
 }
 ```
 
+`verdicts` holds only the keys for the aspects asked in get_forecast: precipitation
+gives rain and rain_probability_max, wind gives windy and wind_kmh, snow gives snow
+and snow_days. temperature and general add none, so a question about the
+temperature never gets a verdict to start its sentence with. An empty aspects
+list keeps every verdict.
+
 `weather` is the WMO weather code translated by a table in code. Verdicts: rain is
 yes at 50 percent or more, unlikely from 20, no below; windy at 20 km/h or more
 on the relevant wind value; snow when any selected day has snowfall above zero,
@@ -213,6 +219,7 @@ Templates for every other outcome, English:
 | input_too_long | Your question is longer than 500 characters. Please shorten it. |
 | rate_limited | Too many requests from this client. Wait a minute and try again. |
 | blocked | I cannot show that answer. |
+| no_recording | Offline mode has no recording for this question. Switch offline off, or ask one of the recorded questions. |
 | upstream_error | The {service} service did not respond. Try again in a moment. |
 
 Suggestion chips for `place_ambiguous`: "Weather in {name}, {admin1}, {country_code}"
@@ -316,7 +323,7 @@ Recordings for the golden set are committed to the repository.
 | GET /api/trace/{id} | | one trace |
 | GET /api/health | | {status, version, checked_at, checks: [{name, ok, latency_ms, detail}]} |
 | GET /api/cost | | {prices, last_request, session_total_usd, last_eval} |
-| POST /api/eval/run | {model: id or "all"} | {run_id} |
+| POST /api/eval/run | {model: id or "all"} | 202 {models}; the page polls GET /api/eval, whose latest entries carry each run_id |
 | GET /api/eval | | {running, progress: {done, total}, latest: {model_id: summary}} |
 | GET /api/eval/{run_id} | | full results including per-item traces |
 

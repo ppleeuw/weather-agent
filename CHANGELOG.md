@@ -5,6 +5,36 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follo
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-09-16
+
+Review release: an independent review from three lenses with every finding
+verified against the code; the confirmed ones are fixed here.
+
+### Changed
+- A past or far date, an unreadable date text or a day count beyond the
+  forecast now reaches the range check and gets the out-of-range answer,
+  instead of being silently rewritten to today or a week.
+- "Tonight" means the coming night: the night window uses the next date's
+  small hours.
+- The place the model named is a dataclass; the geocode outcome uses the same
+  words as the trace.
+- The request boundary records any failure in the trace instead of a bare
+  500; a question without a recording in offline mode has its own outcome.
+- The model-call budget event is logged as failed when it fires; the budget
+  stays at the four the assignment allows, with the reason in the docstring.
+- Grounding ignores coordinates, weather codes and the day flag, and allows
+  the asked day count.
+- Eval traces no longer push the user's traces out of the store; the eval run
+  route takes a lock and returns the queued models.
+- Health reports a missing recordings directory as degraded.
+- Malformed tool arguments from a model are a provider error, not a crash.
+- The trace keeps at most 500 characters of a rejected oversized question.
+- Labels live in the provider registry only; timeouts and the output cap are
+  named constants; stop reasons appear in the trace.
+
+### Removed
+- Fifty stale model recordings made with earlier prompts.
+
 ## [0.5.0] - 2026-09-16
 
 ### Added

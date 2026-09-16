@@ -7,9 +7,7 @@ validated here, field by field, and every correction is noted for the trace.
 """
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass, field
-from datetime import date
 
 import httpx
 
@@ -33,8 +31,6 @@ WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", 
 WHEN_KINDS = ["now", "today", "tomorrow", "weekday", "date", "in_days", "period"]
 PARTS_OF_DAY = ["morning", "afternoon", "evening", "night"]
 ASPECTS = ["temperature", "precipitation", "wind", "snow", "general"]
-MAX_DAYS = 15
-DATE_RE = re.compile(r"^\d{4}(-\d{2}(-\d{2})?)?$")
 
 LOOKUP_PLACE = {
     "name": "lookup_place",
@@ -84,18 +80,28 @@ TOOL_NAMES = {tool["name"] for tool in TOOLS}
 
 
 @dataclass
+class Place:
+    """The place as the user named it, before geocoding."""
+
+    name: str
+    region: str | None = None
+    country: str | None = None
+
+
+@dataclass
 class Understanding:
     """What code made of the model's tool calls."""
 
-    place: dict | None  # {"name", "region", "country"}
+    place: Place | None
     when: When | None
     notes: list[str] = field(default_factory=list)
     unknown_tools: list[str] = field(default_factory=list)
     raw_calls: list[ToolCall] = field(default_factory=list)
 
     @property
-    def asked_forecast(self) -> bool:
-        return any(call.name == "get_forecast" for call in self.raw_calls)
+    def asked_weather(self) -> bool:
+        """The model called a registered tool, so it read the message as a weather question."""
+        return any(call.name in TOOL_NAMES for call in self.raw_calls)
 
 
 def understand(
@@ -110,12 +116,16 @@ def interpret(calls: list[ToolCall]) -> Understanding:
     """Turn tool calls into a validated place and When, noting every correction."""
     notes: list[str] = []
     unknown: list[str] = []
-    place: dict | None = None
+    place: Place | None = None
     forecast_args: dict | None = None
     for call in calls:
         if call.name == "lookup_place":
+            if place is not None:
+                notes.append(f"lookup_place was called again; {place.name!r} replaced by {call.arguments.get('name')!r}")
             place = _place(call.arguments, notes)
         elif call.name == "get_forecast":
+            if forecast_args is not None:
+                notes.append("get_forecast was called again; the last call is used")
             forecast_args = call.arguments
         else:
             unknown.append(call.name)
@@ -128,31 +138,37 @@ def interpret(calls: list[ToolCall]) -> Understanding:
     return Understanding(place, when, notes, unknown, list(calls))
 
 
-def _place(args: dict, notes: list[str]) -> dict | None:
+def _place(args: dict, notes: list[str]) -> Place | None:
     name = str(args.get("name") or "").strip()
     if not name:
         notes.append("lookup_place had no name")
         return None
-    return {"name": name, "region": _text_or_none(args.get("region")), "country": _text_or_none(args.get("country"))}
+    return Place(name, _text_or_none(args.get("region")), _text_or_none(args.get("country")))
 
 
 def _when(args: dict, notes: list[str]) -> When:
+    """Validate types and enums. Whether a date or a day count is in reach is forecast.precheck's job."""
     kind = _choice(args.get("when"), WHEN_KINDS, "when", notes) or "now"
     weekday = _choice(_lower(args.get("weekday")), WEEKDAYS, "weekday", notes)
     part_of_day = _choice(_lower(args.get("part_of_day")), PARTS_OF_DAY, "part_of_day", notes)
-    date_text = _text_or_none(args.get("date"))
-    if date_text is not None and not _valid_date(date_text):
-        notes.append(f"date {date_text!r} is not YYYY, YYYY-MM or YYYY-MM-DD; dropped")
-        date_text = None
+    date_text = _text_or_none(args.get("date"))  # kept as written; precheck rejects what it cannot read
     days = args.get("days")
-    if days is not None and (isinstance(days, bool) or not isinstance(days, int) or not 1 <= days <= MAX_DAYS):
-        notes.append(f"days {days!r} is outside 1 to {MAX_DAYS}; dropped")
+    # bool is a subclass of int: a model that sends true must not pass as days=1.
+    if days is not None and (isinstance(days, bool) or not isinstance(days, int) or days < 1):
+        notes.append(f"days {days!r} is not a positive whole number; dropped")
         days = None
-    aspects = [a for a in (args.get("aspects") or []) if a in ASPECTS] or ["general"]
+    raw_aspects = args.get("aspects") or []
+    aspects = [a for a in raw_aspects if a in ASPECTS]
+    dropped = [a for a in raw_aspects if a not in ASPECTS]
+    if dropped:
+        notes.append(f"aspects {dropped!r} are not in {ASPECTS}; dropped")
     kind = _repair_kind(kind, weekday, date_text, days, notes)
     if kind == "period" and days is None:
         days = 7
-    return When(kind=kind, weekday=weekday, date=date_text, days=days, part_of_day=part_of_day, aspects=aspects)
+    if kind == "now" and part_of_day:
+        notes.append(f"when=now with part_of_day {part_of_day!r}; a part of day is a window, using today")
+        kind = "today"
+    return When(kind=kind, weekday=weekday, date=date_text, days=days, part_of_day=part_of_day, aspects=aspects or ["general"])
 
 
 def _repair_kind(kind: str, weekday: str | None, date_text: str | None, days: int | None, notes: list[str]) -> str:
@@ -178,17 +194,6 @@ def _choice(value: str | None, allowed: list[str], field_name: str, notes: list[
         return value
     notes.append(f"{field_name} {value!r} is not one of {allowed}; dropped")
     return None
-
-
-def _valid_date(text: str) -> bool:
-    if not DATE_RE.match(text):
-        return False
-    parts = [int(p) for p in text.split("-")]
-    try:
-        date(parts[0], parts[1] if len(parts) > 1 else 1, parts[2] if len(parts) > 2 else 1)
-    except ValueError:
-        return False
-    return True
 
 
 def _text_or_none(value: object) -> str | None:
