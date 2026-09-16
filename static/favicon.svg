@@ -1,15 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="4 0 24 32" width="32" height="32" role="img" aria-label="Weather Agent" shape-rendering="crispEdges">
-  <!-- A pixel cloud that talks: warm rows top to bottom, three dark squares as typing dots,
-       three raindrops underneath. Unit 4 px on an 8 by 8 grid. -->
-  <rect x="12" y="0" width="8" height="4" fill="#fec63a"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="4 4 24 28" width="32" height="32" role="img" aria-label="Weather Agent">
+  <!-- A pixel speech bubble in warm stepped rows, with three dots: weather you can talk to. Unit 4 px. -->
   <rect x="8" y="4" width="16" height="4" fill="#fec63a"/>
-  <rect x="4" y="8" width="24" height="4" fill="#ffaf01"/>
-  <rect x="8" y="8" width="4" height="4" fill="#101013"/>
-  <rect x="16" y="8" width="4" height="4" fill="#101013"/>
-  <rect x="24" y="8" width="4" height="4" fill="#101013"/>
-  <rect x="4" y="12" width="24" height="4" fill="#fa500f"/>
+  <rect x="4" y="8" width="24" height="4" fill="#fec63a"/>
+  <rect x="4" y="12" width="24" height="4" fill="#ffaf01"/>
+  <rect x="8" y="12" width="4" height="4" fill="#101013"/>
+  <rect x="16" y="12" width="4" height="4" fill="#101013"/>
+  <rect x="24" y="12" width="4" height="4" fill="#101013"/>
   <rect x="4" y="16" width="24" height="4" fill="#fa500f"/>
-  <rect x="8" y="24" width="4" height="8" fill="#e51300"/>
-  <rect x="16" y="24" width="4" height="8" fill="#e51300"/>
-  <rect x="24" y="24" width="4" height="8" fill="#e51300"/>
+  <rect x="8" y="20" width="16" height="4" fill="#fa500f"/>
+  <rect x="8" y="24" width="4" height="4" fill="#e51300"/>
+  <rect x="4" y="28" width="4" height="4" fill="#e51300"/>
 </svg>

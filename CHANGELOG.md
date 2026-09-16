@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follo
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-09-16
+
+### Changed
+- The mark and the favicon are the pixel speech bubble of 1.1.0 again.
+- ARCHITECTURE.md shows the full component view of 1.1.0 again; the sequence
+  diagram keeps the 1.2.0 form.
+
 ## [1.2.0] - 2026-09-16
 
 ### Changed

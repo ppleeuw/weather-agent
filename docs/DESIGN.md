@@ -137,7 +137,7 @@ Error messages say what failed and what the user can do, in one sentence each. T
 
 For each tool, create your own logo with a matching favicon. Spend some time on it, make it unique.
 
-Weather Agent: a pixel mark, in the stepped-block manner of mistral.ai's own brand but with a different shape. A cloud of 4 px squares, six squares wide with a two-step top, in warm rows top to bottom: `#fec63a`, `#ffaf01`, `#fa500f`. Three dark squares in the widest row read as the dots of someone typing: a cloud you can talk to. Three raindrops of one by two squares fall underneath in `#e51300`. `static/logo.svg` at 32 px, `static/favicon.svg` cropped to the mark. Discrete rows, no gradient.
+Weather Agent: a pixel mark, in the stepped-block manner of mistral.ai's own brand but with a different shape. A speech bubble of 4 px squares, six squares wide, in four warm rows top to bottom: `#fec63a`, `#ffaf01`, `#fa500f`, then a two-square tail to the bottom left in `#e51300`. Three dark squares in the second row read as the dots of someone typing: weather you can talk to. `static/logo.svg` at 32 px, `static/favicon.svg` cropped to the mark. Discrete rows, no gradient.
 
 The settings icon is drawn in the same style: a pixel sun that is also a gear, a ring of eight squares with eight teeth, in the text colour because it is a control and not a brand mark.
 

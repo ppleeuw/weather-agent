@@ -57,45 +57,67 @@ retry or extra step cannot run away unnoticed.
 
 ## Components: model versus code
 
-The same request as a path through the code, with only the twelve arrows that
-matter. Amber boxes call a language model; grey boxes are plain code; the
-dashed boxes are outside services.
-
 ```mermaid
-flowchart TD
-    UI[Browser: app.js] -->|1 question in| P[pipeline.run]
-    P -->|2 before: length, rate limit| G[guardrails.py]
-    P -->|3 around: registered tools, call budget| G
-    P -->|4 model call one: choose tool calls| U[understand.py]
-    U -.-> LLM1[(Mistral or Anthropic)]
-    P -->|5 service call: search the name| GEO[geocode.py]
-    GEO -.-> OM1[(Open-Meteo Geocoding)]
-    GEO -->|6 code: pick the place by population| P
-    P -->|7 service call: 16 local days| FC[forecast.py]
-    FC -.-> OM2[(Open-Meteo Forecast)]
-    FC -->|8 code: resolve the date, build facts and verdicts| P
-    P -->|9 model call two: phrase the facts| A[answer.py]
-    A -.-> LLM2[(Mistral or Anthropic)]
-    P -->|10 after: grounding, prompt leak| G
-    P -->|11 store the trace| T[trace.py]
-    P -->|12 answer out| UI
+flowchart LR
+    subgraph Browser
+        app[app.js ask flow, health dot]
+        settings[settings.js + pages/*]
+    end
+    subgraph Server
+        main[main.py routes]
+        pipeline[pipeline.py]
+        guardrails[guardrails.py]
+        understand[understand.py]
+        geocode[geocode.py: Open-Meteo or Nominatim]
+        forecast[forecast.py]
+        verdicts[verdicts.py]
+        answer[answer.py]
+        providers[providers/ registry, mistral.py, anthropic.py]
+        recording[recording.py]
+        trace[trace.py]
+        pricing[pricing.py]
+        health[health.py]
+        eval[eval/ golden, checks, runner]
+    end
+    subgraph Outside
+        mistral[(Mistral API)]
+        anthropic[(Anthropic API)]
+        geo[(Open-Meteo Geocoding)]
+        osm[(Nominatim)]
+        fc[(Open-Meteo Forecast)]
+    end
+
+    app --> main --> pipeline
+    settings --> main
+    pipeline --> guardrails
+    pipeline --> understand --> providers
+    pipeline --> geocode --> geo
+    geocode --> osm
+    pipeline --> forecast --> fc
+    forecast --> verdicts
+    pipeline --> answer --> providers
+    providers --> mistral
+    providers --> anthropic
+    providers --> recording
+    geocode --> recording
+    forecast --> recording
+    pipeline --> trace
+    pipeline --> pricing
+    main --> health
+    main --> eval --> pipeline
 
     classDef model fill:#fff4d2,stroke:#8a5e00,color:#18181b;
     classDef code fill:#f5f4ef,stroke:#56566c,color:#18181b;
-    classDef ext fill:#fbfbf8,stroke:#e4e3de,color:#56566c,stroke-dasharray: 4 3;
-    class U,A model;
-    class UI,P,G,GEO,FC,T code;
-    class LLM1,LLM2,OM1,OM2 ext;
+    classDef ext fill:#fbfbf8,stroke:#e4e3de,color:#56566c;
+    class understand,answer,providers model;
+    class app,settings,main,pipeline,guardrails,geocode,forecast,verdicts,recording,trace,pricing,health,eval code;
+    class mistral,anthropic,geo,osm,fc ext;
 ```
 
-The supporting modules stay off the picture: providers/ builds and parses the
-two vendors' requests, recording.py records and replays every outside call,
-pricing.py prices the model calls, health.py checks the dependencies, and eval/
-runs the golden set through the same pipeline.run.
-
-The model is only ever asked two things: which tools to call with which words,
-and how to phrase a facts object. It never sees a coordinate to copy, never
-converts a date, never decides whether a number means rain.
+Amber boxes call a language model. Grey boxes are plain code. The model is only
+ever asked two things: which tools to call with which words, and how to phrase a
+facts object. It never sees a coordinate to copy, never converts a date, never
+decides whether a number means rain.
 
 | Decision | Made by | Where |
 |---|---|---|
