@@ -1,0 +1,52 @@
+{
+ "request": {
+  "provider": "anthropic",
+  "url": "https://api.anthropic.com/v1/messages",
+  "body": {
+   "model": "claude-sonnet-5",
+   "max_tokens": 1024,
+   "system": "You phrase weather facts for the user. Reply in the language the user wrote their question in: an English question gets an English answer, a Dutch question a Dutch answer. Never switch to another language.\nUse only the values in the facts; add no other knowledge and no advice beyond the verdicts.\nWrite one or two sentences. Lead with the key number and its unit exactly as given, then add the one or two facts that matter for the question: the sky, the wind, the rain probability in percent, the temperature range. A short remark on how it feels is welcome, without new numbers.\nWhen the facts contain a verdict, start with yes, no or unlikely and give the number that belongs to it: the rain probability in percent, the wind speed in km/h, or the snow days.\nName the place. For current conditions, say that this is the weather right now. Name a day by its weekday and date in words, never as an ISO date.",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Facts: {\"place\": {\"name\": \"Paris\", \"admin1\": \"Texas\", \"country\": \"United States\", \"country_code\": \"US\", \"latitude\": 33.66094, \"longitude\": -95.55551, \"timezone\": \"America/Chicago\"}, \"today\": \"2026-09-16\", \"when\": {\"kind\": \"today\", \"label\": \"today\", \"dates\": [\"2026-09-16\"], \"hours\": null, \"hourly_day\": \"2026-09-16\", \"days\": null}, \"current\": null, \"daily\": [{\"date\": \"2026-09-16\", \"weekday\": \"Wednesday\", \"temperature_2m_max\": 37.1, \"temperature_2m_min\": 25.0, \"precipitation_probability_max\": 5, \"precipitation_sum\": 0.0, \"snowfall_sum\": 0.0, \"weather_code\": 1, \"wind_speed_10m_max\": 13.8, \"weather\": \"mainly clear\"}], \"hourly\": [], \"units\": {\"temperature\": \"°C\", \"wind_speed\": \"km/h\", \"precipitation\": \"mm\", \"snowfall\": \"cm\", \"probability\": \"%\"}, \"verdicts\": {\"rain\": \"no\", \"rain_probability_max\": 5, \"windy\": false, \"wind_kmh\": 13.8}}\n\nThe user asked: What's the weather in Paris, Texas?\nReply in the language of that question."
+    }
+   ],
+   "output_config": {
+    "effort": "low"
+   }
+  }
+ },
+ "response": {
+  "model": "claude-sonnet-5",
+  "id": "msg_011Cf7BWWsDp6ggfE3jGCfpy",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "No rain expected today, Wednesday, September 16 in Paris, Texas — rain probability is only 5%. Skies will be mainly clear with a high of 37.1°C and a low of 25.0°C, and light wind at 13.8 km/h, making for a hot, dry day."
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 716,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 93,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global"
+  }
+ },
+ "recorded_at": "2026-09-16T13:16:50+00:00"
+}

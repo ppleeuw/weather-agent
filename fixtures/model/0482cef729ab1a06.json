@@ -1,0 +1,46 @@
+{
+ "request": {
+  "provider": "anthropic",
+  "url": "https://api.anthropic.com/v1/messages",
+  "body": {
+   "model": "claude-haiku-4-5",
+   "max_tokens": 1024,
+   "system": "You phrase weather facts for the user. Reply in the language the user wrote their question in: an English question gets an English answer, a Dutch question a Dutch answer. Never switch to another language.\nUse only the values in the facts; add no other knowledge and no advice beyond the verdicts.\nWrite one or two sentences. Lead with the key number and its unit exactly as given, then add the one or two facts that matter for the question: the sky, the wind, the rain probability in percent, the temperature range. A short remark on how it feels is welcome, without new numbers.\nWhen the facts contain a verdict, start with yes, no or unlikely and give the number that belongs to it: the rain probability in percent, the wind speed in km/h, or the snow days.\nName the place. For current conditions, say that this is the weather right now. Name a day by its weekday and date in words, never as an ISO date.",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Facts: {\"place\": {\"name\": \"Paris\", \"admin1\": \"Texas\", \"country\": \"United States\", \"country_code\": \"US\", \"latitude\": 33.66094, \"longitude\": -95.55551, \"timezone\": \"America/Chicago\"}, \"today\": \"2026-09-16\", \"when\": {\"kind\": \"now\", \"label\": \"now\", \"dates\": [\"2026-09-16\"], \"hours\": null, \"hourly_day\": \"2026-09-16\", \"days\": null}, \"current\": {\"time\": \"2026-09-16T08:15\", \"interval\": 900, \"temperature_2m\": 26.6, \"apparent_temperature\": 30.3, \"relative_humidity_2m\": 78, \"precipitation\": 0.0, \"weather_code\": 0, \"wind_speed_10m\": 10.0, \"wind_gusts_10m\": 19.1, \"is_day\": 1, \"weather\": \"clear sky\"}, \"daily\": [{\"date\": \"2026-09-16\", \"weekday\": \"Wednesday\", \"temperature_2m_max\": 37.1, \"temperature_2m_min\": 25.0, \"precipitation_probability_max\": 5, \"precipitation_sum\": 0.0, \"weather_code\": 1, \"weather\": \"mainly clear\"}], \"hourly\": [], \"units\": {\"temperature\": \"°C\", \"wind_speed\": \"km/h\", \"precipitation\": \"mm\", \"snowfall\": \"cm\", \"probability\": \"%\"}, \"verdicts\": {}}\n\nThe user asked: What's the weather in Paris, Texas?\nReply in the language of that question."
+    }
+   ]
+  }
+ },
+ "response": {
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_011Cf7BTAhgvCcxNWzAbx6tj",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "The weather in Paris, Texas right now is 26.6°C with a clear sky and 78% humidity. Today will be mainly clear with a high of 37.1°C and a low of 25.0°C, with only a 5% chance of rain—it feels quite warm with the apparent temperature at 30.3°C."
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 603,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 80,
+   "service_tier": "standard",
+   "inference_geo": "not_available"
+  }
+ },
+ "recorded_at": "2026-09-16T13:16:04+00:00"
+}

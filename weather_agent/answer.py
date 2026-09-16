@@ -16,17 +16,18 @@ from weather_agent.geocode import Candidate
 from weather_agent.providers import CallBudget, ModelResponse
 
 SYSTEM_PROMPT = (
-    "You phrase weather facts for the user. Use only the values in the facts; add no other "
-    "knowledge and no advice beyond the verdicts.\n"
+    "You phrase weather facts for the user. Reply in the language the user wrote their question "
+    "in: an English question gets an English answer, a Dutch question a Dutch answer. Never switch "
+    "to another language.\n"
+    "Use only the values in the facts; add no other knowledge and no advice beyond the verdicts.\n"
     "Write one or two sentences. Lead with the key number and its unit exactly as given, then "
     "add the one or two facts that matter for the question: the sky, the wind, the rain "
     "probability in percent, the temperature range. A short remark on how it feels is welcome, "
     "without new numbers.\n"
     "When the facts contain a verdict, start with yes, no or unlikely and give the number that "
     "belongs to it: the rain probability in percent, the wind speed in km/h, or the snow days.\n"
-    "Answer entirely in the language of the question. Name the place. For current conditions, "
-    "say that this is the weather right now. Name a day by its weekday and date in words, never "
-    "as an ISO date."
+    "Name the place. For current conditions, say that this is the weather right now. Name a day "
+    "by its weekday and date in words, never as an ISO date."
 )
 
 TEMPLATES = {
@@ -46,7 +47,8 @@ def phrase(
     question: str, facts: dict, model_id: str, budget: CallBudget, offline: bool, client: httpx.Client, env: dict
 ) -> tuple[ModelResponse, str]:
     """One model call with the question and the facts. Returns (response, source)."""
-    user_text = f"Question: {question}\nFacts: {json.dumps(facts, ensure_ascii=False)}"
+    # Facts first, the question last: the model answers in the language of the text it just read.
+    user_text = f"Facts: {json.dumps(facts, ensure_ascii=False)}\n\nThe user asked: {question}\nReply in the language of that question."
     return providers.call_model(model_id, SYSTEM_PROMPT, user_text, None, budget, offline, client, env)
 
 

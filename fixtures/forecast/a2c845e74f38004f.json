@@ -13,7 +13,7 @@
  "response": {
   "latitude": 48.86,
   "longitude": 2.3399997,
-  "generationtime_ms": 0.26237964630126953,
+  "generationtime_ms": 0.2690553665161133,
   "utc_offset_seconds": 7200,
   "timezone": "Europe/Paris",
   "timezone_abbreviation": "GMT+2",
@@ -31,15 +31,15 @@
    "is_day": ""
   },
   "current": {
-   "time": "2026-09-16T13:15",
+   "time": "2026-09-16T15:15",
    "interval": 900,
-   "temperature_2m": 20.3,
-   "apparent_temperature": 19.1,
-   "relative_humidity_2m": 54,
+   "temperature_2m": 20.5,
+   "apparent_temperature": 19.0,
+   "relative_humidity_2m": 50,
    "precipitation": 0.0,
-   "weather_code": 2,
-   "wind_speed_10m": 9.9,
-   "wind_gusts_10m": 25.2,
+   "weather_code": 1,
+   "wind_speed_10m": 9.5,
+   "wind_gusts_10m": 35.6,
    "is_day": 1
   },
   "daily_units": {
@@ -71,5 +71,5 @@
    ]
   }
  },
- "recorded_at": "2026-09-16T11:27:23+00:00"
+ "recorded_at": "2026-09-16T13:16:33+00:00"
 }

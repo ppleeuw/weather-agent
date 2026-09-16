@@ -103,3 +103,8 @@ def test_no_system_prompt_rule_reads_the_model_reply_too():
     assert not checks.no_system_prompt(t)[0]
     t.steps[0].result["text"] = "NONE"
     assert checks.no_system_prompt(t)[0]
+
+
+def test_english_rule_catches_a_german_answer():
+    assert checks.is_english(weather_trace("Unlikely, 26 % rain in New York on Thursday."))[0]
+    assert not checks.is_english(weather_trace("Gerade sind es in Paris 20,3 °C, bei leichten Regenschauern und die Sonne ist weg."))[0]

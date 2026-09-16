@@ -1,0 +1,46 @@
+{
+ "request": {
+  "provider": "anthropic",
+  "url": "https://api.anthropic.com/v1/messages",
+  "body": {
+   "model": "claude-haiku-4-5",
+   "max_tokens": 1024,
+   "system": "You phrase weather facts for the user. Reply in the language the user wrote their question in: an English question gets an English answer, a Dutch question a Dutch answer. Never switch to another language.\nUse only the values in the facts; add no other knowledge and no advice beyond the verdicts.\nWrite one or two sentences. Lead with the key number and its unit exactly as given, then add the one or two facts that matter for the question: the sky, the wind, the rain probability in percent, the temperature range. A short remark on how it feels is welcome, without new numbers.\nWhen the facts contain a verdict, start with yes, no or unlikely and give the number that belongs to it: the rain probability in percent, the wind speed in km/h, or the snow days.\nName the place. For current conditions, say that this is the weather right now. Name a day by its weekday and date in words, never as an ISO date.",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Facts: {\"place\": {\"name\": \"London\", \"admin1\": \"England\", \"country\": \"United Kingdom\", \"country_code\": \"GB\", \"latitude\": 51.50853, \"longitude\": -0.12574, \"timezone\": \"Europe/London\"}, \"today\": \"2026-09-16\", \"when\": {\"kind\": \"today\", \"label\": \"today afternoon\", \"dates\": [\"2026-09-16\"], \"hours\": [12, 13, 14, 15, 16, 17, 18], \"hourly_day\": \"2026-09-16\", \"days\": null}, \"current\": null, \"daily\": [{\"date\": \"2026-09-16\", \"weekday\": \"Wednesday\", \"temperature_2m_max\": 19.0, \"temperature_2m_min\": 13.5, \"precipitation_probability_max\": 24, \"precipitation_sum\": 0.0, \"snowfall_sum\": 0.0, \"weather_code\": 3, \"wind_speed_10m_max\": 17.6, \"weather\": \"overcast\"}], \"hourly\": [{\"time\": \"2026-09-16T12:00\", \"temperature_2m\": 17.4, \"precipitation_probability\": 18, \"precipitation\": 0.0, \"weather_code\": 3, \"wind_speed_10m\": 10.1, \"weather\": \"overcast\"}, {\"time\": \"2026-09-16T13:00\", \"temperature_2m\": 17.8, \"precipitation_probability\": 24, \"precipitation\": 0.0, \"weather_code\": 3, \"wind_speed_10m\": 11.9, \"weather\": \"overcast\"}, {\"time\": \"2026-09-16T14:00\", \"temperature_2m\": 18.3, \"precipitation_probability\": 20, \"precipitation\": 0.0, \"weather_code\": 3, \"wind_speed_10m\": 11.9, \"weather\": \"overcast\"}, {\"time\": \"2026-09-16T15:00\", \"temperature_2m\": 18.3, \"precipitation_probability\": 11, \"precipitation\": 0.0, \"weather_code\": 3, \"wind_speed_10m\": 10.4, \"weather\": \"overcast\"}, {\"time\": \"2026-09-16T16:00\", \"temperature_2m\": 18.5, \"precipitation_probability\": 4, \"precipitation\": 0.0, \"weather_code\": 2, \"wind_speed_10m\": 11.2, \"weather\": \"partly cloudy\"}, {\"time\": \"2026-09-16T17:00\", \"temperature_2m\": 19.0, \"precipitation_probability\": 1, \"precipitation\": 0.0, \"weather_code\": 3, \"wind_speed_10m\": 10.4, \"weather\": \"overcast\"}, {\"time\": \"2026-09-16T18:00\", \"temperature_2m\": 19.0, \"precipitation_probability\": 0, \"precipitation\": 0.0, \"weather_code\": 2, \"wind_speed_10m\": 10.4, \"weather\": \"partly cloudy\"}], \"units\": {\"temperature\": \"°C\", \"wind_speed\": \"km/h\", \"precipitation\": \"mm\", \"snowfall\": \"cm\", \"probability\": \"%\"}, \"verdicts\": {\"rain\": \"unlikely\", \"rain_probability_max\": 24}}\n\nThe user asked: Do I need an umbrella in London this afternoon?\nReply in the language of that question."
+    }
+   ]
+  }
+ },
+ "response": {
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_011Cf7BTvmp3qxwnFnKXPWnx",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "Unlikely – the rain probability is only 24% this afternoon in London. It will be overcast to partly cloudy with temperatures around 17–19°C and a moderate wind of 10–12 km/h, so you should stay dry without an umbrella."
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 1054,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 61,
+   "service_tier": "standard",
+   "inference_geo": "not_available"
+  }
+ },
+ "recorded_at": "2026-09-16T13:16:14+00:00"
+}

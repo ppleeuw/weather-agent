@@ -26,4 +26,4 @@ def test_place_label_skips_missing_region():
 
 def test_system_prompt_rules():
     p = answer.SYSTEM_PROMPT.lower()
-    assert "two sentences" in p and "language" in p and "only" in p
+    assert "two sentences" in p and "language" in p and "only" in p and "never switch" in p

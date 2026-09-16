@@ -1,0 +1,46 @@
+{
+ "request": {
+  "provider": "anthropic",
+  "url": "https://api.anthropic.com/v1/messages",
+  "body": {
+   "model": "claude-haiku-4-5",
+   "max_tokens": 1024,
+   "system": "You phrase weather facts for the user. Reply in the language the user wrote their question in: an English question gets an English answer, a Dutch question a Dutch answer. Never switch to another language.\nUse only the values in the facts; add no other knowledge and no advice beyond the verdicts.\nWrite one or two sentences. Lead with the key number and its unit exactly as given, then add the one or two facts that matter for the question: the sky, the wind, the rain probability in percent, the temperature range. A short remark on how it feels is welcome, without new numbers.\nWhen the facts contain a verdict, start with yes, no or unlikely and give the number that belongs to it: the rain probability in percent, the wind speed in km/h, or the snow days.\nName the place. For current conditions, say that this is the weather right now. Name a day by its weekday and date in words, never as an ISO date.",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Facts: {\"place\": {\"name\": \"Paris\", \"admin1\": \"Île-de-France Region\", \"country\": \"France\", \"country_code\": \"FR\", \"latitude\": 48.85341, \"longitude\": 2.3488, \"timezone\": \"Europe/Paris\"}, \"today\": \"2026-09-16\", \"when\": {\"kind\": \"now\", \"label\": \"now\", \"dates\": [\"2026-09-16\"], \"hours\": null, \"hourly_day\": \"2026-09-16\", \"days\": null}, \"current\": {\"time\": \"2026-09-16T15:15\", \"interval\": 900, \"temperature_2m\": 20.5, \"apparent_temperature\": 19.0, \"relative_humidity_2m\": 50, \"precipitation\": 0.0, \"weather_code\": 1, \"wind_speed_10m\": 9.5, \"wind_gusts_10m\": 35.6, \"is_day\": 1, \"weather\": \"mainly clear\"}, \"daily\": [{\"date\": \"2026-09-16\", \"weekday\": \"Wednesday\", \"temperature_2m_max\": 22.5, \"temperature_2m_min\": 14.7, \"precipitation_probability_max\": 0, \"precipitation_sum\": 0.2, \"weather_code\": 80, \"weather\": \"slight rain showers\"}], \"hourly\": [], \"units\": {\"temperature\": \"°C\", \"wind_speed\": \"km/h\", \"precipitation\": \"mm\", \"snowfall\": \"cm\", \"probability\": \"%\"}, \"verdicts\": {}}\n\nThe user asked: Hey, how cold is it in Paris?\nReply in the language of that question."
+    }
+   ]
+  }
+ },
+ "response": {
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_011Cf7BSh4XwKBkC71NPjTvM",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "It's 20.5°C in Paris right now, and it feels a bit cooler at around 19°C with a moderate wind of 9.5 km/h. The sky is mainly clear, so it's pleasant despite the breeze."
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 610,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 58,
+   "service_tier": "standard",
+   "inference_geo": "not_available"
+  }
+ },
+ "recorded_at": "2026-09-16T13:15:57+00:00"
+}

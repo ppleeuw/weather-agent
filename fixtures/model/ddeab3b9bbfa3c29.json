@@ -1,0 +1,47 @@
+{
+ "request": {
+  "provider": "mistral",
+  "url": "https://api.mistral.ai/v1/chat/completions",
+  "body": {
+   "model": "mistral-medium-latest",
+   "messages": [
+    {
+     "role": "system",
+     "content": "You phrase weather facts for the user. Reply in the language the user wrote their question in: an English question gets an English answer, a Dutch question a Dutch answer. Never switch to another language.\nUse only the values in the facts; add no other knowledge and no advice beyond the verdicts.\nWrite one or two sentences. Lead with the key number and its unit exactly as given, then add the one or two facts that matter for the question: the sky, the wind, the rain probability in percent, the temperature range. A short remark on how it feels is welcome, without new numbers.\nWhen the facts contain a verdict, start with yes, no or unlikely and give the number that belongs to it: the rain probability in percent, the wind speed in km/h, or the snow days.\nName the place. For current conditions, say that this is the weather right now. Name a day by its weekday and date in words, never as an ISO date."
+    },
+    {
+     "role": "user",
+     "content": "Facts: {\"place\": {\"name\": \"Oslo\", \"admin1\": \"Oslo\", \"country\": \"Norway\", \"country_code\": \"NO\", \"latitude\": 59.91273, \"longitude\": 10.74609, \"timezone\": \"Europe/Oslo\"}, \"today\": \"2026-09-16\", \"when\": {\"kind\": \"period\", \"label\": \"the next 7 days\", \"dates\": [\"2026-09-16\", \"2026-09-17\", \"2026-09-18\", \"2026-09-19\", \"2026-09-20\", \"2026-09-21\", \"2026-09-22\"], \"hours\": null, \"hourly_day\": \"2026-09-16\", \"days\": 7}, \"current\": null, \"daily\": [{\"date\": \"2026-09-16\", \"weekday\": \"Wednesday\", \"temperature_2m_max\": 19.4, \"temperature_2m_min\": 13.6, \"precipitation_probability_max\": 86, \"precipitation_sum\": 0.0, \"snowfall_sum\": 0.0, \"weather_code\": 3, \"wind_speed_10m_max\": 21.2, \"weather\": \"overcast\"}, {\"date\": \"2026-09-17\", \"weekday\": \"Thursday\", \"temperature_2m_max\": 16.3, \"temperature_2m_min\": 10.5, \"precipitation_probability_max\": 65, \"precipitation_sum\": 1.4, \"snowfall_sum\": 0.0, \"weather_code\": 53, \"wind_speed_10m_max\": 22.3, \"weather\": \"moderate drizzle\"}, {\"date\": \"2026-09-18\", \"weekday\": \"Friday\", \"temperature_2m_max\": 17.3, \"temperature_2m_min\": 11.8, \"precipitation_probability_max\": 72, \"precipitation_sum\": 0.1, \"snowfall_sum\": 0.0, \"weather_code\": 51, \"wind_speed_10m_max\": 20.5, \"weather\": \"light drizzle\"}, {\"date\": \"2026-09-19\", \"weekday\": \"Saturday\", \"temperature_2m_max\": 17.6, \"temperature_2m_min\": 10.5, \"precipitation_probability_max\": 67, \"precipitation_sum\": 0.9, \"snowfall_sum\": 0.0, \"weather_code\": 51, \"wind_speed_10m_max\": 24.8, \"weather\": \"light drizzle\"}, {\"date\": \"2026-09-20\", \"weekday\": \"Sunday\", \"temperature_2m_max\": 15.7, \"temperature_2m_min\": 9.4, \"precipitation_probability_max\": 22, \"precipitation_sum\": 0.0, \"snowfall_sum\": 0.0, \"weather_code\": 3, \"wind_speed_10m_max\": 18.6, \"weather\": \"overcast\"}, {\"date\": \"2026-09-21\", \"weekday\": \"Monday\", \"temperature_2m_max\": 16.4, \"temperature_2m_min\": 9.4, \"precipitation_probability_max\": 4, \"precipitation_sum\": 0.0, \"snowfall_sum\": 0.0, \"weather_code\": 2, \"wind_speed_10m_max\": 20.2, \"weather\": \"partly cloudy\"}, {\"date\": \"2026-09-22\", \"weekday\": \"Tuesday\", \"temperature_2m_max\": 15.3, \"temperature_2m_min\": 7.9, \"precipitation_probability_max\": 6, \"precipitation_sum\": 0.0, \"snowfall_sum\": 0.0, \"weather_code\": 1, \"wind_speed_10m_max\": 6.4, \"weather\": \"mainly clear\"}], \"hourly\": [], \"units\": {\"temperature\": \"°C\", \"wind_speed\": \"km/h\", \"precipitation\": \"mm\", \"snowfall\": \"cm\", \"probability\": \"%\"}, \"verdicts\": {\"snow\": false, \"snow_days\": []}}\n\nThe user asked: Will it snow in Oslo this week?\nReply in the language of that question."
+    }
+   ],
+   "max_tokens": 1024
+  }
+ },
+ "response": {
+  "id": "f2529dacf5454040b9ad21118fe41693",
+  "created": 1789564547,
+  "model": "mistral-medium-latest",
+  "usage": {
+   "prompt_tokens": 1292,
+   "total_tokens": 1304,
+   "completion_tokens": 12,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "service_tier": "standard"
+  },
+  "object": "chat.completion",
+  "choices": [
+   {
+    "index": 0,
+    "finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "tool_calls": null,
+     "content": "No, 0 snow days in Oslo this week."
+    }
+   }
+  ]
+ },
+ "recorded_at": "2026-09-16T13:15:48+00:00"
+}

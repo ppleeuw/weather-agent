@@ -1,0 +1,52 @@
+{
+ "request": {
+  "provider": "anthropic",
+  "url": "https://api.anthropic.com/v1/messages",
+  "body": {
+   "model": "claude-sonnet-5",
+   "max_tokens": 1024,
+   "system": "You phrase weather facts for the user. Reply in the language the user wrote their question in: an English question gets an English answer, a Dutch question a Dutch answer. Never switch to another language.\nUse only the values in the facts; add no other knowledge and no advice beyond the verdicts.\nWrite one or two sentences. Lead with the key number and its unit exactly as given, then add the one or two facts that matter for the question: the sky, the wind, the rain probability in percent, the temperature range. A short remark on how it feels is welcome, without new numbers.\nWhen the facts contain a verdict, start with yes, no or unlikely and give the number that belongs to it: the rain probability in percent, the wind speed in km/h, or the snow days.\nName the place. For current conditions, say that this is the weather right now. Name a day by its weekday and date in words, never as an ISO date.",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Facts: {\"place\": {\"name\": \"Utrecht\", \"admin1\": \"Utrecht\", \"country\": \"The Netherlands\", \"country_code\": \"NL\", \"latitude\": 52.09083, \"longitude\": 5.12222, \"timezone\": \"Europe/Amsterdam\"}, \"today\": \"2026-09-16\", \"when\": {\"kind\": \"now\", \"label\": \"now\", \"dates\": [\"2026-09-16\"], \"hours\": null, \"hourly_day\": \"2026-09-16\", \"days\": null}, \"current\": {\"time\": \"2026-09-16T15:15\", \"interval\": 900, \"temperature_2m\": 18.1, \"apparent_temperature\": 17.9, \"relative_humidity_2m\": 78, \"precipitation\": 0.0, \"weather_code\": 3, \"wind_speed_10m\": 10.8, \"wind_gusts_10m\": 30.2, \"is_day\": 1, \"weather\": \"overcast\"}, \"daily\": [{\"date\": \"2026-09-16\", \"weekday\": \"Wednesday\", \"temperature_2m_max\": 19.1, \"temperature_2m_min\": 14.5, \"precipitation_probability_max\": 100, \"precipitation_sum\": 4.2, \"weather_code\": 61, \"weather\": \"slight rain\"}], \"hourly\": [], \"units\": {\"temperature\": \"°C\", \"wind_speed\": \"km/h\", \"precipitation\": \"mm\", \"snowfall\": \"cm\", \"probability\": \"%\"}, \"verdicts\": {}}\n\nThe user asked: Hoe koud is het in Utrecht?\nReply in the language of that question."
+    }
+   ],
+   "output_config": {
+    "effort": "low"
+   }
+  }
+ },
+ "response": {
+  "model": "claude-sonnet-5",
+  "id": "msg_011Cf7BavtxRWm2tDV5vsRGg",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "Het is nu 18,1°C in Utrecht, met een bewolkte hemel en een windje van 10,8 km/u (windstoten tot 30,2 km/u). Vandaag ligt de temperatuur tussen 14,5°C en 19,1°C, met 100% kans op regen, dus het voelt met 17,9°C aan als fris en wisselvallig weer."
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 793,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 128,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global"
+  }
+ },
+ "recorded_at": "2026-09-16T13:17:52+00:00"
+}

@@ -1,0 +1,171 @@
+{
+ "request": {
+  "provider": "anthropic",
+  "url": "https://api.anthropic.com/v1/messages",
+  "body": {
+   "model": "claude-sonnet-5",
+   "max_tokens": 1024,
+   "system": "You are the understanding step of a weather app. You never answer the question yourself.\nFor a weather question, always call both tools: lookup_place with the place exactly as the user wrote it, and get_forecast with when and aspects. 'What's the weather' also needs both.\nA specific date, month or year, past or future, is when=date with the date copied as written, for example '1950-01'.\nCopy weekday names and dates as the user wrote them. Never compute or convert a date. Never estimate coordinates.\nIf the message is not a question about the weather at a place, call no tool and reply with the single word NONE.",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Do I need an umbrella in London this afternoon?"
+    }
+   ],
+   "tools": [
+    {
+     "name": "lookup_place",
+     "description": "Identify the place the user asks about. Copy the place name as the user wrote it, without weather words. Fill region and country only if the user named them.",
+     "input_schema": {
+      "type": "object",
+      "properties": {
+       "name": {
+        "type": "string",
+        "description": "Place name as written, e.g. 'Paris' or 'New York'"
+       },
+       "region": {
+        "type": "string",
+        "description": "State, province or region if named, e.g. 'Texas'"
+       },
+       "country": {
+        "type": "string",
+        "description": "Country if named, e.g. 'France' or 'US'"
+       }
+      },
+      "required": [
+       "name"
+      ]
+     }
+    },
+    {
+     "name": "get_forecast",
+     "description": "Ask for the weather at the place from lookup_place. Describe when and which aspects. Pass weekday names and dates exactly as the user wrote them; never compute a date.",
+     "input_schema": {
+      "type": "object",
+      "properties": {
+       "when": {
+        "type": "string",
+        "enum": [
+         "now",
+         "today",
+         "tomorrow",
+         "weekday",
+         "date",
+         "in_days",
+         "period"
+        ]
+       },
+       "weekday": {
+        "type": "string",
+        "enum": [
+         "monday",
+         "tuesday",
+         "wednesday",
+         "thursday",
+         "friday",
+         "saturday",
+         "sunday"
+        ],
+        "description": "Only with when=weekday"
+       },
+       "date": {
+        "type": "string",
+        "description": "Only with when=date. The date the user wrote, ISO style with the precision given: YYYY, YYYY-MM or YYYY-MM-DD"
+       },
+       "days": {
+        "type": "integer",
+        "description": "With when=in_days: days from today. With when=period: number of days starting today, e.g. 7 for 'this week'"
+       },
+       "part_of_day": {
+        "type": "string",
+        "enum": [
+         "morning",
+         "afternoon",
+         "evening",
+         "night"
+        ]
+       },
+       "aspects": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "enum": [
+          "temperature",
+          "precipitation",
+          "wind",
+          "snow",
+          "general"
+         ]
+        }
+       }
+      },
+      "required": [
+       "when",
+       "aspects"
+      ]
+     }
+    }
+   ],
+   "tool_choice": {
+    "type": "auto"
+   },
+   "output_config": {
+    "effort": "low"
+   }
+  }
+ },
+ "response": {
+  "model": "claude-sonnet-5",
+  "id": "msg_011Cf7BXougi9feZ2LZYskL6",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "tool_use",
+    "id": "toolu_01H8Vc3PCSb8DvMANuMsx1xf",
+    "name": "lookup_place",
+    "input": {
+     "name": "London"
+    },
+    "caller": {
+     "type": "direct"
+    }
+   },
+   {
+    "type": "tool_use",
+    "id": "toolu_01G9A6DuLrJiBMV19aZTPfCU",
+    "name": "get_forecast",
+    "input": {
+     "when": "today",
+     "aspects": [
+      "precipitation"
+     ],
+     "part_of_day": "afternoon"
+    },
+    "caller": {
+     "type": "direct"
+    }
+   }
+  ],
+  "container": null,
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 1204,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 152,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global"
+  }
+ },
+ "recorded_at": "2026-09-16T13:17:10+00:00"
+}

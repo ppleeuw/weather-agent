@@ -1,0 +1,52 @@
+{
+ "request": {
+  "provider": "anthropic",
+  "url": "https://api.anthropic.com/v1/messages",
+  "body": {
+   "model": "claude-sonnet-5",
+   "max_tokens": 1024,
+   "system": "You phrase weather facts for the user. Reply in the language the user wrote their question in: an English question gets an English answer, a Dutch question a Dutch answer. Never switch to another language.\nUse only the values in the facts; add no other knowledge and no advice beyond the verdicts.\nWrite one or two sentences. Lead with the key number and its unit exactly as given, then add the one or two facts that matter for the question: the sky, the wind, the rain probability in percent, the temperature range. A short remark on how it feels is welcome, without new numbers.\nWhen the facts contain a verdict, start with yes, no or unlikely and give the number that belongs to it: the rain probability in percent, the wind speed in km/h, or the snow days.\nName the place. For current conditions, say that this is the weather right now. Name a day by its weekday and date in words, never as an ISO date.",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Facts: {\"place\": {\"name\": \"New York\", \"admin1\": \"New York\", \"country\": \"United States\", \"country_code\": \"US\", \"latitude\": 40.71427, \"longitude\": -74.00597, \"timezone\": \"America/New_York\"}, \"today\": \"2026-09-16\", \"when\": {\"kind\": \"tomorrow\", \"label\": \"tomorrow\", \"dates\": [\"2026-09-17\"], \"hours\": null, \"hourly_day\": \"2026-09-17\", \"days\": null}, \"current\": null, \"daily\": [{\"date\": \"2026-09-17\", \"weekday\": \"Thursday\", \"temperature_2m_max\": 29.0, \"temperature_2m_min\": 18.9, \"precipitation_probability_max\": 26, \"precipitation_sum\": 0.0, \"snowfall_sum\": 0.0, \"weather_code\": 3, \"wind_speed_10m_max\": 17.4, \"weather\": \"overcast\"}], \"hourly\": [], \"units\": {\"temperature\": \"°C\", \"wind_speed\": \"km/h\", \"precipitation\": \"mm\", \"snowfall\": \"cm\", \"probability\": \"%\"}, \"verdicts\": {\"rain\": \"unlikely\", \"rain_probability_max\": 26}}\n\nThe user asked: Will it rain in New York tomorrow?\nReply in the language of that question."
+    }
+   ],
+   "output_config": {
+    "effort": "low"
+   }
+  }
+ },
+ "response": {
+  "model": "claude-sonnet-5",
+  "id": "msg_011Cf7BW2TRagjhr1fekQUs8",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "Unlikely, with just a 26% chance of rain in New York on Thursday, September 17th. Expect overcast skies with temperatures between 18.9°C and 29°C, and moderate wind up to 17.4 km/h — a mild, cloudy day overall."
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 702,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 88,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "service_tier": "standard",
+   "inference_geo": "global"
+  }
+ },
+ "recorded_at": "2026-09-16T13:16:44+00:00"
+}

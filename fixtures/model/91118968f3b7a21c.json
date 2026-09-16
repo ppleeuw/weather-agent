@@ -1,0 +1,46 @@
+{
+ "request": {
+  "provider": "anthropic",
+  "url": "https://api.anthropic.com/v1/messages",
+  "body": {
+   "model": "claude-haiku-4-5",
+   "max_tokens": 1024,
+   "system": "You phrase weather facts for the user. Reply in the language the user wrote their question in: an English question gets an English answer, a Dutch question a Dutch answer. Never switch to another language.\nUse only the values in the facts; add no other knowledge and no advice beyond the verdicts.\nWrite one or two sentences. Lead with the key number and its unit exactly as given, then add the one or two facts that matter for the question: the sky, the wind, the rain probability in percent, the temperature range. A short remark on how it feels is welcome, without new numbers.\nWhen the facts contain a verdict, start with yes, no or unlikely and give the number that belongs to it: the rain probability in percent, the wind speed in km/h, or the snow days.\nName the place. For current conditions, say that this is the weather right now. Name a day by its weekday and date in words, never as an ISO date.",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Facts: {\"place\": {\"name\": \"Tokyo\", \"admin1\": \"Tokyo\", \"country\": \"Japan\", \"country_code\": \"JP\", \"latitude\": 35.6895, \"longitude\": 139.69171, \"timezone\": \"Asia/Tokyo\"}, \"today\": \"2026-09-16\", \"when\": {\"kind\": \"weekday\", \"label\": \"Saturday\", \"dates\": [\"2026-09-19\"], \"hours\": null, \"hourly_day\": \"2026-09-19\", \"days\": null}, \"current\": null, \"daily\": [{\"date\": \"2026-09-19\", \"weekday\": \"Saturday\", \"temperature_2m_max\": 24.4, \"temperature_2m_min\": 19.8, \"precipitation_probability_max\": 77, \"precipitation_sum\": 7.17, \"snowfall_sum\": 0.0, \"weather_code\": 61, \"wind_speed_10m_max\": 9.0, \"weather\": \"slight rain\"}], \"hourly\": [], \"units\": {\"temperature\": \"°C\", \"wind_speed\": \"km/h\", \"precipitation\": \"mm\", \"snowfall\": \"cm\", \"probability\": \"%\"}, \"verdicts\": {}}\n\nThe user asked: What will the temperature be in Tokyo on Saturday?\nReply in the language of that question."
+    }
+   ]
+  }
+ },
+ "response": {
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_011Cf7BUCLw8xH5kzGuKyq23",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "On Saturday, September 19th in Tokyo, the temperature will range from 19.8°C to 24.4°C. Slight rain is expected with a 77% chance of precipitation, and winds will be moderate at 9.0 km/h—it will feel somewhat cool and damp."
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 520,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 70,
+   "service_tier": "standard",
+   "inference_geo": "not_available"
+  }
+ },
+ "recorded_at": "2026-09-16T13:16:18+00:00"
+}

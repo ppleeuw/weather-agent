@@ -1,0 +1,46 @@
+{
+ "request": {
+  "provider": "anthropic",
+  "url": "https://api.anthropic.com/v1/messages",
+  "body": {
+   "model": "claude-haiku-4-5",
+   "max_tokens": 1024,
+   "system": "You phrase weather facts for the user. Reply in the language the user wrote their question in: an English question gets an English answer, a Dutch question a Dutch answer. Never switch to another language.\nUse only the values in the facts; add no other knowledge and no advice beyond the verdicts.\nWrite one or two sentences. Lead with the key number and its unit exactly as given, then add the one or two facts that matter for the question: the sky, the wind, the rain probability in percent, the temperature range. A short remark on how it feels is welcome, without new numbers.\nWhen the facts contain a verdict, start with yes, no or unlikely and give the number that belongs to it: the rain probability in percent, the wind speed in km/h, or the snow days.\nName the place. For current conditions, say that this is the weather right now. Name a day by its weekday and date in words, never as an ISO date.",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Facts: {\"place\": {\"name\": \"Amsterdam\", \"admin1\": \"North Holland\", \"country\": \"The Netherlands\", \"country_code\": \"NL\", \"latitude\": 52.37403, \"longitude\": 4.88969, \"timezone\": \"Europe/Amsterdam\"}, \"today\": \"2026-09-16\", \"when\": {\"kind\": \"now\", \"label\": \"now\", \"dates\": [\"2026-09-16\"], \"hours\": null, \"hourly_day\": \"2026-09-16\", \"days\": null}, \"current\": {\"time\": \"2026-09-16T15:15\", \"interval\": 900, \"temperature_2m\": 18.1, \"apparent_temperature\": 16.6, \"relative_humidity_2m\": 71, \"precipitation\": 0.5, \"weather_code\": 61, \"wind_speed_10m\": 16.2, \"wind_gusts_10m\": 34.9, \"is_day\": 1, \"weather\": \"slight rain\"}, \"daily\": [{\"date\": \"2026-09-16\", \"weekday\": \"Wednesday\", \"temperature_2m_max\": 18.4, \"temperature_2m_min\": 15.6, \"precipitation_probability_max\": 100, \"precipitation_sum\": 15.7, \"weather_code\": 63, \"weather\": \"moderate rain\"}], \"hourly\": [], \"units\": {\"temperature\": \"°C\", \"wind_speed\": \"km/h\", \"precipitation\": \"mm\", \"snowfall\": \"cm\", \"probability\": \"%\"}, \"verdicts\": {}}\n\nThe user asked: How warm is it in Amsterdam right now?\nReply in the language of that question."
+    }
+   ]
+  }
+ },
+ "response": {
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_011Cf7BTRo2zv6VGDBBBk8Gc",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+   {
+    "type": "text",
+    "text": "It is 18.1°C in Amsterdam right now, though it feels cooler at 16.6°C due to the 16.2 km/h wind. There is slight rain falling with moderate rain expected throughout the day."
+   }
+  ],
+  "container": null,
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+   "input_tokens": 605,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation": {
+    "ephemeral_5m_input_tokens": 0,
+    "ephemeral_1h_input_tokens": 0
+   },
+   "output_tokens": 54,
+   "service_tier": "standard",
+   "inference_geo": "not_available"
+  }
+ },
+ "recorded_at": "2026-09-16T13:16:07+00:00"
+}

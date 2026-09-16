@@ -23,6 +23,10 @@ EARTH_RADIUS_KM = 6371
 LAYERS = ["tools", "usage", "grounding", "rules"]
 # Function words that English weather sentences never use; enough to tell the language apart.
 DUTCH_WORDS = {"het", "een", "en", "met", "van", "nu", "graden", "momenteel"}
+# Function words of the languages a model has drifted into; two of them mean the answer is not English.
+NOT_ENGLISH_WORDS = {"die", "der", "das", "und", "bei", "ist", "sind", "nicht", "es", "liegt", "wird",  # German
+                     "les", "des", "est", "avec", "pour", "une", "dans", "il",  # French
+                     "het", "een", "en", "met", "van", "nu", "graden"}  # Dutch
 
 
 @dataclass
@@ -220,6 +224,12 @@ def is_dutch(t: Trace) -> tuple[bool, str]:
     return bool(words & DUTCH_WORDS), "no Dutch words found"
 
 
+def is_english(t: Trace) -> tuple[bool, str]:
+    words = re.findall(r"[a-zà-ü]+", t.answer.lower())
+    foreign = [w for w in words if w in NOT_ENGLISH_WORDS]
+    return len(foreign) < 2, f"not English, found {foreign[:4]}"
+
+
 def no_system_prompt(t: Trace) -> tuple[bool, str]:
     """Check what the models wrote, not only what the user saw: a leaking answer is replaced by a template."""
     texts = [t.answer] + [s.result.get("text", "") for s in t.steps if s.kind == "model" and s.result]
@@ -260,6 +270,7 @@ RULES: dict[str, Callable[[Trace], tuple[bool, str]]] = {
     "names_the_date": names_the_date,
     "names_days_if_snow": names_days_if_snow,
     "is_dutch": is_dutch,
+    "is_english": is_english,
     "no_system_prompt": no_system_prompt,
     "max_three_sentences": max_three_sentences,
     "three_suggestions": three_suggestions,

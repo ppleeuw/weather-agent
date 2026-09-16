@@ -1,0 +1,15 @@
+{
+ "request": {
+  "url": "https://geocoding-api.open-meteo.com/v1/search",
+  "params": {
+   "name": "sdlkjaasd",
+   "count": 10,
+   "language": "en",
+   "format": "json"
+  }
+ },
+ "response": {
+  "generationtime_ms": 0.089645386
+ },
+ "recorded_at": "2026-09-16T12:55:49+00:00"
+}
