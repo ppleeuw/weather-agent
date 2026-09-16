@@ -1,10 +1,92 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Weather Agent</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Weather Agent</title>
+  <meta name="description" content="Ask about the weather anywhere, in your own words.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <!-- Fonts are self-hosted in static/fonts (see styles.css), so nothing here needs the network -->
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-<p>Weather Agent shell. The page is built in Task 2.</p>
+  <div class="page">
+
+    <!-- Header: logo and name left, health dot and settings gear right -->
+    <header class="header">
+      <div class="brand">
+        <img src="/logo.svg" width="32" height="32" alt="">
+        <h1 class="heading">Weather Agent</h1>
+      </div>
+      <div class="controls">
+        <button id="health-dot" class="health-dot" type="button" aria-label="Service health">
+          <span class="dot" aria-hidden="true"></span>
+        </button>
+        <div id="health-card" class="card health-card small" hidden></div>
+        <button id="gear" class="button-secondary button-icon" type="button" aria-label="Settings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="7"/>
+            <circle cx="12" cy="12" r="2.5"/>
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="main">
+
+      <!-- Ask row: Enter or the button submits the form -->
+      <form id="ask-form" class="ask-row">
+        <input id="question" class="input" type="text" placeholder="Ask about the weather anywhere" autocomplete="off" autofocus>
+        <button id="ask" class="button-primary" type="submit">Ask</button>
+      </form>
+
+      <!-- Result: the spinner sits where the answer will appear, never in the button -->
+      <section id="result" class="result" aria-live="polite" hidden>
+        <div id="spinner" class="spinner" hidden></div>
+        <p id="answer" class="display"></p>
+        <p id="meta" class="small muted"></p>
+        <div id="suggestions" class="chips"></div>
+        <div id="error" class="error" role="alert" hidden></div>
+      </section>
+
+      <!-- Empty state: shown until the first question is asked -->
+      <section id="empty" class="empty">
+        <h2 class="heading">Ask in your own words</h2>
+        <p class="muted">A model reads the question, code looks up the forecast on Open-Meteo, a model phrases the answer.</p>
+        <div class="chips">
+          <button class="button-secondary" type="button" data-question="Hey, how cold is it in Paris?">Hey, how cold is it in Paris?</button>
+          <button class="button-secondary" type="button" data-question="Will it rain in New York tomorrow?">Will it rain in New York tomorrow?</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer: version and data credits -->
+    <footer class="footer small">
+      <span id="version">Weather Agent</span>
+      <span>Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> · Location data based on GeoNames</span>
+    </footer>
+  </div>
+
+  <!-- Settings modal: menu left, page right; opened by the gear, closed by the button, Escape or a backdrop click -->
+  <div id="settings" class="modal-backdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <header class="modal-header">
+        <h2 id="settings-title" class="heading">Settings</h2>
+        <button id="settings-close" class="button-secondary button-icon" type="button" aria-label="Close settings">&times;</button>
+      </header>
+      <nav id="settings-menu" class="modal-menu" aria-label="Settings pages">
+        <button class="menu-item" type="button" data-page="models">Models</button>
+        <button class="menu-item" type="button" data-page="trace">Trace</button>
+        <button class="menu-item" type="button" data-page="eval">Eval</button>
+        <button class="menu-item" type="button" data-page="cost">Cost</button>
+        <button class="menu-item" type="button" data-page="suitability">Model suitability</button>
+        <button class="menu-item" type="button" data-page="eu-ai-act">EU AI Act</button>
+      </nav>
+      <section id="settings-page" class="modal-page"></section>
+    </div>
+  </div>
+
+  <script type="module" src="/app.js"></script>
 </body>
 </html>

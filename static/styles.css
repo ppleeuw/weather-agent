@@ -1,0 +1,190 @@
+/* Weather Agent styles.
+   Tokens and every rule come from docs/DESIGN.md: no shadows, no gradients,
+   1 px borders, weight 400 only, the accent is a marker and not a paint. */
+
+/* Fonts are served from static/fonts so the page looks the same offline.
+   Latin subsets of Inter 400 and Instrument Serif 400, downloaded from Google Fonts on 2026-09-16. */
+@font-face {
+  font-family: "Inter"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("/fonts/inter-400-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Instrument Serif"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("/fonts/instrument-serif-400-latin.woff2") format("woff2");
+}
+
+/* Tokens, copied verbatim from docs/DESIGN.md */
+:root {
+  --font-display: "Instrument Serif", Georgia, serif; /* free stand-in for their commercial ALT Mistral */
+  --font-ui: "Inter", system-ui, sans-serif;          /* weight 400 only; hierarchy by size, not weight */
+  --font-code: ui-monospace, "SF Mono", Menlo, monospace;
+
+  --color-text: #18181b;          /* not pure black */
+  --color-text-muted: #56566c;
+  --color-bg: #fbfbf8;            /* page background */
+  --color-surface: #f5f4ef;       /* cards, panels */
+  --color-surface-hover: #ebe9e0; /* hovered rows and menu items */
+  --color-border: #e4e3de;        /* 1 px borders */
+  --color-accent: #fa500f;        /* actions and active states only */
+  --color-accent-2: #ff8204;      /* secondary accent, sparingly */
+  --color-accent-3: #fec63a;      /* secondary accent, sparingly */
+
+  --color-success: #5c6b1f;       --color-success-bg: #f0f1dc;
+  --color-warning: #8a5e00;       --color-warning-bg: #fff4d2;
+  --color-error:   #b31200;       --color-error-bg:   #ffdccf;
+
+  --radius-button: 8px;
+  --radius-card: 12px;
+}
+
+/* Base */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--color-bg); color: var(--color-text); font: 16px/24px var(--font-ui); }
+h1, h2, h3, p { margin: 0; } /* spacing comes from the layout gaps below, not from element margins */
+a { color: var(--color-accent); } /* stays underlined, so colour is not the only signal */
+[hidden] { display: none !important; } /* must win over the display: flex and grid set on components */
+details > summary { cursor: pointer; }
+
+/* Type scale: hierarchy by size and colour, never by weight. The font shorthand reads size/line-height family. */
+.display { font: 40px/48px var(--font-display); }
+.heading { font: 24px/32px var(--font-display); }
+.body { font: 16px/24px var(--font-ui); }
+.small, .badge { font: 13px/20px var(--font-ui); }
+.label, .table th { font: 12px/16px var(--font-ui); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); }
+.code { font: 13px/20px var(--font-code); }
+.muted { color: var(--color-text-muted); }
+pre.code {
+  margin: 0; padding: 12px 16px; white-space: pre-wrap; overflow-wrap: anywhere;
+  background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-button);
+}
+
+/* Layout: one 960 px column, header on top, footer pushed to the bottom */
+.page {
+  max-width: 1024px; /* 960 px of content plus 32 px padding each side */
+  min-height: 100vh; margin: 0 auto; padding: 48px 32px;
+  display: flex; flex-direction: column; gap: 48px;
+}
+.header, .footer, .brand, .controls, .ask-row { display: flex; align-items: center; }
+.header, .footer { justify-content: space-between; gap: 16px; }
+.brand, .controls, .ask-row { gap: 12px; }
+.controls { position: relative; } /* the health card hangs under the dot */
+.main { flex: 1; display: flex; flex-direction: column; gap: 32px; }
+.ask-row .input { flex: 1; }
+.result { display: flex; flex-direction: column; gap: 16px; }
+.result > :empty { display: none; } /* an empty answer or chip row must not add a gap */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.footer { padding-top: 16px; border-top: 1px solid var(--color-border); color: var(--color-text-muted); }
+
+/* Interactive components: one height, one font, a focus ring on keyboard focus only,
+   120 ms transitions on background and border colour and nothing else */
+.button-primary, .button-secondary, .input, .select, .menu-item, .health-dot {
+  height: 40px; font: inherit; color: inherit; border-radius: var(--radius-button);
+  transition: background-color 120ms, border-color 120ms;
+}
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+.button-primary, .button-secondary, .menu-item, .health-dot { padding: 0 16px; border: none; background: transparent; cursor: pointer; }
+.button-primary { background: var(--color-accent); } /* label keeps --color-text: white on accent fails contrast */
+.button-primary:hover { background: var(--color-accent-2); }
+.button-primary:active { background: color-mix(in srgb, var(--color-accent), black 8%); }
+.button-secondary { border: 1px solid var(--color-border); }
+.button-secondary:hover, .health-dot:hover { background: var(--color-surface); }
+.button-secondary:active { background: var(--color-surface-hover); }
+.button-primary:disabled, .button-secondary:disabled {
+  background: var(--color-surface); color: var(--color-text-muted);
+  border: 1px solid var(--color-border); cursor: not-allowed;
+}
+.button-icon, .health-dot { width: 40px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+
+.input, .select { width: 100%; padding: 8px 12px; background: var(--color-surface); border: 1px solid var(--color-border); }
+.input::placeholder { color: var(--color-text-muted); }
+.input:hover, .select:hover { border-color: var(--color-text-muted); }
+.input:focus, .select:focus { border-color: var(--color-accent); }
+/* The chevron is an inline SVG so the dropdown needs no icon file */
+.select {
+  appearance: none; padding-right: 40px;
+  background-repeat: no-repeat; background-position: right 12px center;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%2318181b' stroke-width='1.5'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+}
+
+/* Switch: a checkbox drawn as a pill; the knob is the ::before box */
+.switch {
+  appearance: none; position: relative; width: 40px; height: 24px; margin: 0; cursor: pointer;
+  background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 999px;
+  transition: background-color 120ms, border-color 120ms;
+}
+.switch::before { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--color-text-muted); }
+.switch:checked { background: var(--color-accent); border-color: var(--color-accent); }
+.switch:checked::before { left: 19px; background: var(--color-text); }
+
+.card { padding: 16px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card); }
+
+/* Table: separate borders so the outer radius can round the corners */
+.table {
+  width: 100%; border-collapse: separate; border-spacing: 0; background: var(--color-bg);
+  border: 1px solid var(--color-border); border-radius: var(--radius-card); overflow: hidden;
+}
+.table th, .table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--color-border); }
+.table th { background: var(--color-surface); }
+.table tr:last-child td { border-bottom: none; }
+.table tbody tr { transition: background-color 120ms; }
+.table tbody tr:hover { background: var(--color-surface-hover); }
+.table td:first-child { border-left: 2px solid transparent; } /* reserved so selecting a row does not shift it */
+.table tr.selected td:first-child { border-left-color: var(--color-accent); }
+
+/* Menu item: the left border is always there, only its colour changes, so the label never moves */
+.menu-item { width: 100%; padding: 0 12px; text-align: left; border-left: 2px solid transparent; }
+.menu-item:hover, .menu-item.active { background: var(--color-surface-hover); }
+.menu-item.active { border-left-color: var(--color-accent); }
+
+.badge { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; background: var(--color-accent-3); } /* plain badge: an informational count */
+.badge.ok { background: var(--color-success-bg); color: var(--color-success); }
+.badge.warning { background: var(--color-warning-bg); color: var(--color-warning); }
+.badge.fail { background: var(--color-error-bg); color: var(--color-error); }
+
+.spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--color-border); border-top-color: var(--color-accent-2); animation: spin 800ms linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error { display: flex; gap: 8px; padding: 12px 16px; background: var(--color-error-bg); border-left: 2px solid var(--color-error); border-radius: var(--radius-button); }
+.error::before { content: "!"; color: var(--color-error); } /* the icon lives here so scripts only set the text */
+
+.empty {
+  display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 48px; text-align: center;
+  background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card);
+}
+.empty .chips { justify-content: center; }
+
+/* Health dot: grey until the first check. The state class (ok, degraded, down) goes on the
+   #health-dot button; the inner span.dot is the coloured circle. */
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--color-border); }
+.health-dot.ok .dot { background: var(--color-success); }
+.health-dot.degraded .dot { background: var(--color-warning); }
+.health-dot.down .dot { background: var(--color-error); }
+.health-card { position: absolute; top: 48px; right: 0; width: 320px; z-index: 1; }
+
+/* Settings modal: dimmed page, 960 px dialog, a header row, then a 200 px menu column and the
+   page column, which scrolls. minmax(0, 1fr) lets that row shrink to the 80vh limit. */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 2; padding: 32px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(24, 24, 27, 0.4);
+}
+.modal {
+  width: 960px; max-width: 100%; max-height: 80vh;
+  display: grid; grid-template-columns: 200px 1fr; grid-template-rows: auto minmax(0, 1fr);
+  background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-card); overflow: hidden;
+}
+.modal-header {
+  grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 16px 16px 32px; border-bottom: 1px solid var(--color-border);
+}
+.modal-menu { display: flex; flex-direction: column; gap: 4px; padding: 16px; border-right: 1px solid var(--color-border); }
+.modal-page { display: flex; flex-direction: column; gap: 24px; padding: 32px; overflow: auto; }
+
+/* Responsive: only paddings and columns change, never type or component sizes */
+@media (max-width: 1024px) { .page, .modal-backdrop { padding-left: 24px; padding-right: 24px; } }
+@media (max-width: 768px) {
+  .page, .modal-backdrop { padding-left: 16px; padding-right: 16px; }
+  .modal { grid-template-columns: 1fr; grid-template-rows: auto auto minmax(0, 1fr); }
+  .modal-menu { flex-direction: row; flex-wrap: wrap; border-right: none; border-bottom: 1px solid var(--color-border); }
+}
