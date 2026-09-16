@@ -84,9 +84,8 @@ Open-Meteo Geocoding or Nominatim for the geocode step, and the offline switch.
 Trace: the last request with every guardrail event, then every step with
 request, raw response, result, tokens, latency and cost. Eval: the table above
 and a run button. Cost: the price table with sources, the last request, the
-session total, the last eval and the data sources. Model suitability: the
-comparison of the four models and what it means for each step. EU AI Act: a
-working assessment of the app under the regulation.
+session total, the last eval and the data sources. EU AI Act: a working
+assessment of the app under the regulation.
 
 ## Guardrails
 

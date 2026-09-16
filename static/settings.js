@@ -1,4 +1,4 @@
-// settings.js: the settings modal. A menu of six pages on the left, the
+// settings.js: the settings modal. A menu of five pages on the left, the
 // current page on the right. Each page is a module under pages/ with one
 // exported render(container, context) that fills the container.
 
@@ -6,7 +6,6 @@ import * as costPage from "./pages/cost.js";
 import * as euAiActPage from "./pages/eu-ai-act.js";
 import * as evalPage from "./pages/eval.js";
 import * as modelsPage from "./pages/models.js";
-import * as suitabilityPage from "./pages/suitability.js";
 import * as tracePage from "./pages/trace.js";
 
 const backdrop = document.getElementById("settings");
@@ -21,7 +20,6 @@ const PAGES = {
   trace: (container, context) => tracePage.render(container, context),
   eval: (container) => evalPage.render(container),
   cost: (container) => costPage.render(container),
-  suitability: (container) => suitabilityPage.render(container),
   "eu-ai-act": (container) => euAiActPage.render(container),
 };
 

@@ -48,7 +48,7 @@ cp .env.example .env                                   # fill in MISTRAL_API_KEY
 | `weather_agent/health.py` | the seven dependency checks behind the dot |
 | `weather_agent/main.py`, `config.py` | FastAPI routes; .env loading and in-memory settings |
 | `weather_agent/eval/` | golden set, the four layer checks, the runner, saved results |
-| `static/` | the page: index.html, styles.css (dark Mistral theme), app.js, settings.js, pages/ (models, trace, eval, cost, suitability, eu-ai-act), fonts/, pixel logo |
+| `static/` | the page: index.html, styles.css (dark Mistral theme), app.js, settings.js, pages/ (models, trace, eval, cost, eu-ai-act), fonts/, pixel logo |
 | `fixtures/` | recordings of the golden set for offline replay |
 | `tests/` | one file per module, fixtures under tests/fixtures |
 | `docs/` | ARCHITECTURE.md, DESIGN.md, the spec and the plan under superpowers/ |

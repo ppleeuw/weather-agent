@@ -5,6 +5,19 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follo
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-16
+
+### Changed
+- The mark is now a pixel cloud that talks, with three raindrops underneath;
+  the favicon follows it. The settings icon is a pixel sun that is also a gear,
+  in the same style.
+- ARCHITECTURE.md: the request sequence shows the guardrails as one participant
+  touched before, around and after; the component view is reduced to the twelve
+  arrows of one request.
+
+### Removed
+- The Model suitability page; the Eval page shows the same numbers.
+
 ## [1.1.0] - 2026-09-16
 
 ### Added
