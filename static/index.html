@@ -45,7 +45,6 @@
       <section id="result" class="result" aria-live="polite" hidden>
         <div id="spinner" class="spinner" hidden></div>
         <p id="answer" class="display"></p>
-        <p id="meta" class="small muted"></p>
         <div id="suggestions" class="chips"></div>
         <div id="error" class="error" role="alert" hidden></div>
       </section>
@@ -53,7 +52,7 @@
       <!-- Empty state: shown until the first question is asked -->
       <section id="empty" class="empty">
         <h2 class="heading">Ask in your own words</h2>
-        <p class="muted">A model reads the question, code looks up the forecast on Open-Meteo, a model phrases the answer.</p>
+        <p class="muted">You are talking to an AI system: a language model reads the question, code looks up the forecast on Open-Meteo, a language model phrases the answer.</p>
         <div class="chips">
           <button class="button-secondary" type="button" data-question="Hey, how cold is it in Paris?">Hey, how cold is it in Paris?</button>
           <button class="button-secondary" type="button" data-question="Will it rain in New York tomorrow?">Will it rain in New York tomorrow?</button>
@@ -61,10 +60,9 @@
       </section>
     </main>
 
-    <!-- Footer: version and data credits -->
+    <!-- Footer: the version. Data credits are on the Cost page and in the README. -->
     <footer class="footer small">
       <span id="version">Weather Agent</span>
-      <span>Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> · Location data based on GeoNames</span>
     </footer>
   </div>
 

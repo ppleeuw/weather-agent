@@ -157,7 +157,10 @@ function failuresBlock(latest) {
   } else if (rows.length === 0) {
     block.append(el("p", "muted", "No failures in the latest runs."));
   } else {
-    block.append(el("p", "", "Failures in the latest run per model"), table(["Model", "Item", "Layer", "Reason"], rows));
+    // Five rows show; the rest scroll inside the box, so a long list never pushes the page down.
+    const scroll = el("div", "scroll-box");
+    scroll.append(table(["Model", "Item", "Layer", "Reason"], rows));
+    block.append(el("p", "", "Failures in the latest run per model"), scroll);
   }
   return block;
 }

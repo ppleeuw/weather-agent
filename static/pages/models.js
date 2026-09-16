@@ -12,8 +12,8 @@ const STEPS = [
 ];
 
 const INTRO =
-  "The two model steps can run on any of the four models; the two service steps run on Open-Meteo. " +
-  "A change applies to the next question and resets when the server restarts.";
+  "The two model steps can run on four models. The geocode step can use Open-Meteo Geocoding or Nominatim; " +
+  "the forecast step runs on Open-Meteo. A change applies to the next question and resets when the server restarts.";
 
 export async function render(container) {
   const heading = el("h3", "heading", "Models");

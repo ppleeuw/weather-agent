@@ -1,11 +1,12 @@
 // app.js: the page's behaviour, in three parts: the ask flow (question in,
 // answer out), the health dot with its card, and the footer version.
-// The settings modal lives in settings.js; this file only starts it.
+// The settings modal lives in settings.js; this file only starts it. The
+// figures of a request (model, latency, cost) live on the Trace page.
 
 import { ask, getHealth } from "./api.js";
 import { badge, el } from "./dom.js";
-import { formatCost, formatLatency, formatTime } from "./format.js";
-import { initSettings, openSettings } from "./settings.js";
+import { formatLatency, formatTime } from "./format.js";
+import { initSettings } from "./settings.js";
 
 const HEALTH_INTERVAL_MS = 60 * 1000; // the server caches its checks for 60 s, so polling faster gains nothing
 const DOT_STATES = ["ok", "degraded", "down"]; // the classes styles.css knows; anything else leaves the dot grey
@@ -16,7 +17,6 @@ const input = document.getElementById("question");
 const result = document.getElementById("result");
 const spinner = document.getElementById("spinner");
 const answerText = document.getElementById("answer");
-const metaLine = document.getElementById("meta");
 const suggestionChips = document.getElementById("suggestions");
 const errorText = document.getElementById("error");
 const emptyState = document.getElementById("empty");
@@ -57,50 +57,17 @@ function showLoading() {
   result.hidden = false;
   spinner.hidden = false;
   answerText.textContent = "";
-  metaLine.replaceChildren();
   suggestionChips.replaceChildren();
   errorText.hidden = true;
 }
 
 function renderResponse(body) {
-  // Every outcome the pipeline produced has a trace, so the meta line always appears.
-  renderMeta(body);
   if (!body.ok) {
     renderError(body.error || "The request failed. Please try again.");
     return;
   }
   answerText.textContent = body.answer;
   renderSuggestions(body.suggestions || []);
-}
-
-// "mistral-medium-latest · 1.8 s · $0.0021 · Open trace", then the replay notice when there is one.
-// When the two model steps ran on different models, both are named.
-function renderMeta(body) {
-  const figures = [modelNames(body.models), formatLatency(body.latency_ms), formatCost(body.cost_usd)];
-  metaLine.replaceChildren(figures.join(" · ") + " · ", traceLink(body.trace_id));
-  if (body.notice) {
-    metaLine.append(" · " + body.notice);
-  }
-}
-
-function modelNames(models) {
-  if (!models) {
-    return "";
-  }
-  if (models.understand === models.answer) {
-    return models.understand;
-  }
-  return models.understand + " + " + models.answer;
-}
-
-function traceLink(traceId) {
-  const link = el("a", "", "Open trace");
-  link.href = "#trace"; // makes it a real link for the keyboard; the click handler does the work
-  link.addEventListener("click", (event) => {
-    event.preventDefault();
-    openSettings("trace", traceId);
-  });
-  return link;
 }
 
 // Suggestions are complete questions, so a chip fills the input and submits.
