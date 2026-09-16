@@ -29,7 +29,7 @@ SNOW_CODES = {71, 73, 75, 77, 85, 86}
 # Which verdict keys belong to which asked aspect. Temperature and general have none.
 ASPECT_VERDICTS = {
     "precipitation": ("rain", "rain_probability_max"),
-    "wind": ("windy",),
+    "wind": ("windy", "wind_kmh"),
     "snow": ("snow", "snow_days"),
 }
 
@@ -64,7 +64,7 @@ def _wind(current: dict | None, daily: list[dict], hourly: list[dict]) -> dict:
         wind = max_known(hourly, "wind_speed_10m")
     else:
         wind = max_known(daily, "wind_speed_10m_max")
-    return {"windy": None if wind is None else wind >= WINDY_KMH}
+    return {"windy": None if wind is None else wind >= WINDY_KMH, "wind_kmh": wind}
 
 
 def _snow(current: dict | None, daily: list[dict]) -> dict:

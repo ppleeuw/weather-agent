@@ -1,0 +1,47 @@
+{
+ "request": {
+  "provider": "mistral",
+  "url": "https://api.mistral.ai/v1/chat/completions",
+  "body": {
+   "model": "mistral-medium-latest",
+   "messages": [
+    {
+     "role": "system",
+     "content": "You phrase weather facts for the user. Use only the values in the facts; add no other knowledge and no advice beyond the verdicts.\nWrite one or two sentences. Lead with the key number and its unit exactly as given, then add the one or two facts that matter for the question: the sky, the wind, the rain probability in percent, the temperature range. A short remark on how it feels is welcome, without new numbers.\nWhen the facts contain a verdict, start with yes, no or unlikely and give the probability in percent.\nAnswer in the language of the question. Name the place. Say 'right now' for current conditions. Name a day by its weekday and date in words, never as an ISO date."
+    },
+    {
+     "role": "user",
+     "content": "Question: Will it rain in New York tomorrow?\nFacts: {\"place\": {\"name\": \"New York\", \"admin1\": \"New York\", \"country\": \"United States\", \"country_code\": \"US\", \"latitude\": 40.71427, \"longitude\": -74.00597, \"timezone\": \"America/New_York\"}, \"today\": \"2026-09-16\", \"when\": {\"kind\": \"tomorrow\", \"label\": \"tomorrow\", \"dates\": [\"2026-09-17\"], \"hours\": null}, \"current\": null, \"daily\": [{\"date\": \"2026-09-17\", \"weekday\": \"Thursday\", \"temperature_2m_max\": 29.0, \"temperature_2m_min\": 18.9, \"precipitation_probability_max\": 26, \"precipitation_sum\": 0.0, \"snowfall_sum\": 0.0, \"weather_code\": 3, \"wind_speed_10m_max\": 17.4, \"weather\": \"overcast\"}], \"hourly\": [], \"units\": {\"temperature\": \"°C\", \"wind_speed\": \"km/h\", \"precipitation\": \"mm\", \"snowfall\": \"cm\", \"probability\": \"%\"}, \"verdicts\": {\"rain\": \"unlikely\", \"rain_probability_max\": 26}}"
+    }
+   ],
+   "max_tokens": 1024
+  }
+ },
+ "response": {
+  "id": "e81ac4d8526f44d180bdf48a684dfbec",
+  "created": 1789555093,
+  "model": "mistral-medium-latest",
+  "usage": {
+   "prompt_tokens": 484,
+   "total_tokens": 498,
+   "completion_tokens": 14,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "service_tier": "standard"
+  },
+  "object": "chat.completion",
+  "choices": [
+   {
+    "index": 0,
+    "finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "tool_calls": null,
+     "content": "Unlikely, 26 % in New York on Thursday."
+    }
+   }
+  ]
+ },
+ "recorded_at": "2026-09-16T10:38:13+00:00"
+}

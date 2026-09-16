@@ -91,22 +91,23 @@ def failures_of(results: list[dict]) -> list[dict]:
     ]
 
 
-def save(result: dict, directory: Path = RESULTS_DIR) -> Path:
+def save(result: dict, directory: Path | None = None) -> Path:
+    directory = directory or RESULTS_DIR  # resolved at call time so tests can point elsewhere
     directory.mkdir(parents=True, exist_ok=True)
     path = directory / f"{result['run_id']}.json"
     path.write_text(json.dumps(result, indent=1, ensure_ascii=False), encoding="utf-8")
     return path
 
 
-def load(run_id: str, directory: Path = RESULTS_DIR) -> dict | None:
-    path = directory / f"{run_id}.json"
+def load(run_id: str, directory: Path | None = None) -> dict | None:
+    path = (directory or RESULTS_DIR) / f"{run_id}.json"
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
 
 
-def latest_per_model(directory: Path = RESULTS_DIR) -> dict[str, dict]:
+def latest_per_model(directory: Path | None = None) -> dict[str, dict]:
     """The newest saved run per model, without the per-item traces."""
     latest: dict[str, dict] = {}
-    for path in sorted(directory.glob("*.json")):
+    for path in sorted((directory or RESULTS_DIR).glob("*.json")):
         result = json.loads(path.read_text(encoding="utf-8"))
         if result["model"] not in latest or result["finished_at"] > latest[result["model"]]["finished_at"]:
             latest[result["model"]] = {key: value for key, value in result.items() if key != "items"}

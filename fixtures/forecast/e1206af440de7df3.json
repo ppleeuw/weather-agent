@@ -1,0 +1,75 @@
+{
+ "request": {
+  "url": "https://api.open-meteo.com/v1/forecast",
+  "params": {
+   "latitude": 52.37403,
+   "longitude": 4.88969,
+   "timezone": "Europe/Amsterdam",
+   "current": "temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,is_day",
+   "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,weather_code",
+   "forecast_days": 1
+  }
+ },
+ "response": {
+  "latitude": 52.366,
+  "longitude": 4.901,
+  "generationtime_ms": 0.3312826156616211,
+  "utc_offset_seconds": 7200,
+  "timezone": "Europe/Amsterdam",
+  "timezone_abbreviation": "GMT+2",
+  "elevation": 14.0,
+  "current_units": {
+   "time": "iso8601",
+   "interval": "seconds",
+   "temperature_2m": "°C",
+   "apparent_temperature": "°C",
+   "relative_humidity_2m": "%",
+   "precipitation": "mm",
+   "weather_code": "wmo code",
+   "wind_speed_10m": "km/h",
+   "wind_gusts_10m": "km/h",
+   "is_day": ""
+  },
+  "current": {
+   "time": "2026-09-16T12:30",
+   "interval": 900,
+   "temperature_2m": 18.0,
+   "apparent_temperature": 16.6,
+   "relative_humidity_2m": 71,
+   "precipitation": 0.0,
+   "weather_code": 3,
+   "wind_speed_10m": 15.5,
+   "wind_gusts_10m": 29.2,
+   "is_day": 1
+  },
+  "daily_units": {
+   "time": "iso8601",
+   "temperature_2m_max": "°C",
+   "temperature_2m_min": "°C",
+   "precipitation_probability_max": "%",
+   "precipitation_sum": "mm",
+   "weather_code": "wmo code"
+  },
+  "daily": {
+   "time": [
+    "2026-09-16"
+   ],
+   "temperature_2m_max": [
+    18.7
+   ],
+   "temperature_2m_min": [
+    15.6
+   ],
+   "precipitation_probability_max": [
+    100
+   ],
+   "precipitation_sum": [
+    6.3
+   ],
+   "weather_code": [
+    63
+   ]
+  }
+ },
+ "recorded_at": "2026-09-16T10:41:48+00:00"
+}

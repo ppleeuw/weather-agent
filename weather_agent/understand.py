@@ -19,8 +19,10 @@ from weather_agent.providers import CallBudget, ModelResponse, ToolCall
 
 SYSTEM_PROMPT = (
     "You are the understanding step of a weather app. You never answer the question yourself.\n"
-    "For a weather question: call lookup_place with the place exactly as the user wrote it, "
-    "and call get_forecast with when and aspects.\n"
+    "For a weather question, always call both tools: lookup_place with the place exactly as the "
+    "user wrote it, and get_forecast with when and aspects. 'What's the weather' also needs both.\n"
+    "A specific date, month or year, past or future, is when=date with the date copied as written, "
+    "for example '1950-01'.\n"
     "Copy weekday names and dates as the user wrote them. Never compute or convert a date. "
     "Never estimate coordinates.\n"
     "If the message is not a question about the weather at a place, call no tool and reply "

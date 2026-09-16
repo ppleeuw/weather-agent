@@ -21,7 +21,8 @@ from weather_agent.trace import Step, Trace
 RADIUS_KM = 50
 EARTH_RADIUS_KM = 6371
 LAYERS = ["tools", "usage", "grounding", "rules"]
-DUTCH_WORDS = {"het", "graden", "momenteel", "koud", "warm", "regen"}
+# Function words that English weather sentences never use; enough to tell the language apart.
+DUTCH_WORDS = {"het", "een", "en", "met", "van", "nu", "graden", "momenteel"}
 
 
 @dataclass
@@ -37,6 +38,8 @@ def check_item(item: GoldenItem, trace: Trace) -> list[LayerResult]:
 
 
 def check_tools(item: GoldenItem, trace: Trace) -> LayerResult:
+    if trace.outcome == "upstream_error":
+        return LayerResult("tools", True, False, f"upstream error, no tool calls observed: {trace.error_detail[:80]}")
     called = tool_names(trace)
     if called in item.expected_tools:
         return LayerResult("tools", True, True, f"called {called}")

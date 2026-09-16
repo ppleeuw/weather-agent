@@ -169,3 +169,8 @@ def test_precheck_raises_value_error_for_missing_fields():
 
 def test_weekday_names_are_english_and_fixed():
     assert forecast.weekday_name("2026-09-19") == "Saturday"
+
+
+def test_wind_verdict_carries_its_speed():
+    v = forecast.facts(PARIS, forecast.When("now", aspects=["wind"]), raw("forecast_paris_now.json"))["verdicts"]
+    assert set(v) == {"windy", "wind_kmh"} and v["wind_kmh"] == raw("forecast_paris_now.json")["current"]["wind_speed_10m"]

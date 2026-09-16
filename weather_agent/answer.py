@@ -22,10 +22,11 @@ SYSTEM_PROMPT = (
     "add the one or two facts that matter for the question: the sky, the wind, the rain "
     "probability in percent, the temperature range. A short remark on how it feels is welcome, "
     "without new numbers.\n"
-    "When the facts contain a verdict, start with yes, no or unlikely and give the probability "
-    "in percent.\n"
-    "Answer in the language of the question. Name the place. Say 'right now' for current "
-    "conditions. Name a day by its weekday and date in words, never as an ISO date."
+    "When the facts contain a verdict, start with yes, no or unlikely and give the number that "
+    "belongs to it: the rain probability in percent, the wind speed in km/h, or the snow days.\n"
+    "Answer entirely in the language of the question. Name the place. For current conditions, "
+    "say that this is the weather right now. Name a day by its weekday and date in words, never "
+    "as an ISO date."
 )
 
 TEMPLATES = {

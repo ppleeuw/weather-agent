@@ -1,0 +1,47 @@
+{
+ "request": {
+  "provider": "mistral",
+  "url": "https://api.mistral.ai/v1/chat/completions",
+  "body": {
+   "model": "mistral-medium-latest",
+   "messages": [
+    {
+     "role": "system",
+     "content": "You phrase weather facts for the user. Use only the values in the facts; add no other knowledge and no advice beyond the verdicts.\nWrite one or two sentences. Lead with the key number and its unit exactly as given, then add the one or two facts that matter for the question: the sky, the wind, the rain probability in percent, the temperature range. A short remark on how it feels is welcome, without new numbers.\nWhen the facts contain a verdict, start with yes, no or unlikely and give the number that belongs to it: the rain probability in percent, the wind speed in km/h, or the snow days.\nAnswer entirely in the language of the question. Name the place. For current conditions, say that this is the weather right now. Name a day by its weekday and date in words, never as an ISO date."
+    },
+    {
+     "role": "user",
+     "content": "Question: How warm is it in Amsterdam right now?\nFacts: {\"place\": {\"name\": \"Amsterdam\", \"admin1\": \"North Holland\", \"country\": \"The Netherlands\", \"country_code\": \"NL\", \"latitude\": 52.37403, \"longitude\": 4.88969, \"timezone\": \"Europe/Amsterdam\"}, \"today\": \"2026-09-16\", \"when\": {\"kind\": \"now\", \"label\": \"now\", \"dates\": [\"2026-09-16\"], \"hours\": null}, \"current\": {\"time\": \"2026-09-16T12:30\", \"interval\": 900, \"temperature_2m\": 18.0, \"apparent_temperature\": 16.6, \"relative_humidity_2m\": 71, \"precipitation\": 0.0, \"weather_code\": 3, \"wind_speed_10m\": 15.5, \"wind_gusts_10m\": 29.2, \"is_day\": 1, \"weather\": \"overcast\"}, \"daily\": [{\"date\": \"2026-09-16\", \"weekday\": \"Wednesday\", \"temperature_2m_max\": 18.7, \"temperature_2m_min\": 15.6, \"precipitation_probability_max\": 100, \"precipitation_sum\": 6.3, \"weather_code\": 63, \"weather\": \"moderate rain\"}], \"hourly\": [], \"units\": {\"temperature\": \"°C\", \"wind_speed\": \"km/h\", \"precipitation\": \"mm\", \"snowfall\": \"cm\", \"probability\": \"%\"}, \"verdicts\": {}}"
+    }
+   ],
+   "max_tokens": 1024
+  }
+ },
+ "response": {
+  "id": "08e9eb6c4de64ed8ae8a2d51e03fbce0",
+  "created": 1789555307,
+  "model": "mistral-medium-latest",
+  "usage": {
+   "prompt_tokens": 593,
+   "total_tokens": 619,
+   "completion_tokens": 26,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   },
+   "service_tier": "standard"
+  },
+  "object": "chat.completion",
+  "choices": [
+   {
+    "index": 0,
+    "finish_reason": "stop",
+    "message": {
+     "role": "assistant",
+     "tool_calls": null,
+     "content": "18.0 °C in Amsterdam right now, overcast and a wind of 15.5 km/h."
+    }
+   }
+  ]
+ },
+ "recorded_at": "2026-09-16T10:41:48+00:00"
+}

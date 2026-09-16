@@ -60,7 +60,14 @@ def test_yes_no_rule_accepts_punctuation_and_case():
 
 def test_dutch_rule():
     assert checks.is_dutch(weather_trace("Het is 14 °C in Utrecht."))[0]
+    assert checks.is_dutch(weather_trace("16,6 °C in Utrecht, met lichte motregen en een wind van 16,6 km/h."))[0]
     assert not checks.is_dutch(weather_trace("It is 14 °C in Utrecht."))[0]
+
+
+def test_upstream_error_fails_the_tools_layer():
+    t = trace.new_trace("q", "c", {})
+    t.outcome, t.error_detail = "upstream_error", "ProviderError 401"
+    assert not checks.check_tools(item(12), t).passed
 
 
 def test_two_celsius_values_rule():
