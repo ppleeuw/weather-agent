@@ -118,6 +118,10 @@ All interactive components: `--font-ui` 16 px, height 40 px, focus ring 2 px `--
 | Loading indicator | 16 px circle | 2 px ring, `--color-border` with a `--color-accent-2` arc | none | none | round | none | spins 800 ms linear |
 | Error message | padding 12 16 px | `--color-error-bg` | `--color-text`, icon `--color-error` | 2 px left `--color-error` | 8 px | none | none |
 | Empty state | card, padding 48 px, centred | `--color-surface` | heading serif 24 px, one body line muted, one secondary button | `--color-border` | 12 px | none | none |
+| Chip | secondary button | transparent | body | `--color-border` | 8 px | as secondary button | as secondary button; fills the input and submits |
+| Switch | 40 by 24 px pill | `--color-surface`, `--color-accent` when on | none | `--color-border` | 999 px | none | knob moves right, `--color-text` |
+| Health dot | 40 px button holding a 10 px circle | circle: `--color-border` until checked, then success, warning or error | none | none | round | fill `--color-surface` | click opens a card with one row per check |
+| Modal | 960 px, max 80 vh | `--color-bg` | body | `--color-border` | 12 px | none | backdrop `rgba(24, 24, 27, 0.4)` |
 
 Error messages say what failed and what the user can do, in one sentence each. The loading indicator sits where the result will appear, never in the button.
 
@@ -125,14 +129,22 @@ Error messages say what failed and what the user can do, in one sentence each. T
 
 For each tool, create your own logo with a matching favicon. Spend some time on it, make it unique.
 
+Weather Agent: a speech bubble outline in `--color-text` holding a sun disc in `--color-accent` with eight short rays in `--color-accent-3`. Weather you can talk to. `static/logo.svg` at 32 px, `static/favicon.svg` cropped to the mark.
+
+## Fonts
+
+Inter 400 and Instrument Serif 400 are served from `static/fonts` as latin woff2 subsets, so the page renders the same without network. The stylesheet keeps the Georgia and system-ui fallbacks.
+
 ## Responsive behaviour
 
 Primary target is a 1280 px screen share. Nothing below 768 px matters.
 
 | Width | Content column | Settings or trace panel | Tables | Cards in a row |
 |---|---|---|---|---|
-| 1280 | 960 px centred, 32 px page padding | Right side, 320 px, content column shrinks to fill | Full | Up to 3 |
-| 1024 | Full width minus 24 px padding | Right side, 288 px | Full, small text in secondary columns | Up to 2 |
-| 768 | Full width minus 16 px padding | Full screen overlay with a close button, opened from a secondary button | Secondary columns hidden, rows stack label over value | 1 |
+| 1280 | 960 px centred, 32 px page padding | Centred modal, 960 px wide, 80 vh tall, page dimmed behind | Full | Up to 3 |
+| 1024 | Full width minus 24 px padding | Centred modal, full width minus 48 px | Full, small text in secondary columns | Up to 2 |
+| 768 | Full width minus 16 px padding | Modal fills the width, menu becomes a row above the page | Secondary columns hidden, rows stack label over value | 1 |
+
+The settings window replaced the side panel of the first version: six pages with tables and a trace need the width. It has a header row with the title and the close button, a 200 px menu column and a scrolling page column. It closes on the button, Escape, or a click on the dimmed page.
 
 Type scale, spacing and component sizes do not change with width. Only columns, panels and padding do.
