@@ -1,3 +1,3 @@
 """Weather Agent: a natural-language weather app with a traced, guarded pipeline."""
 
-VERSION = "0.2.0"
+VERSION = "0.3.0"
