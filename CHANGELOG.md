@@ -5,6 +5,25 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follo
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-16
+
+First complete version for the interview demo.
+
+### Added
+- README with run, test and eval instructions and a screenshot; ARCHITECTURE.md
+  with the request sequence, the component view, the rejected alternatives and
+  the guardrail, recording and eval sections; DESIGN.md updated for the modal,
+  the chips, the switch, the health dot, the logo and the fonts; CLAUDE.md
+  expanded with stack, commands and layout.
+
+### Known limitations
+- The Anthropic key in the local .env was rejected with HTTP 401 during the
+  build, so the two Claude models have no eval results yet. Replace the key and
+  run `python -m weather_agent.eval --model all`.
+- Rejections are English templates; only weather answers follow the language
+  of the question.
+- The system prompt leak check matches whole sentences; a paraphrase passes.
+
 ## [0.9.0] - 2026-09-16
 
 Review release: an independent review from three lenses with every finding
