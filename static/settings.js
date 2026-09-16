@@ -3,9 +3,10 @@
 // exported render(container, context) that fills the container.
 
 import * as costPage from "./pages/cost.js";
+import * as euAiActPage from "./pages/eu-ai-act.js";
 import * as evalPage from "./pages/eval.js";
 import * as modelsPage from "./pages/models.js";
-import * as staticPage from "./pages/static.js";
+import * as suitabilityPage from "./pages/suitability.js";
 import * as tracePage from "./pages/trace.js";
 
 const backdrop = document.getElementById("settings");
@@ -15,14 +16,13 @@ const gear = document.getElementById("gear");
 const closeButton = document.getElementById("settings-close");
 
 // Menu key (the data-page attribute in index.html) to the function that renders that page.
-// The two placeholder pages share one module and differ only by title.
 const PAGES = {
   models: (container) => modelsPage.render(container),
   trace: (container, context) => tracePage.render(container, context),
   eval: (container) => evalPage.render(container),
   cost: (container) => costPage.render(container),
-  suitability: (container) => staticPage.render(container, "Model suitability"),
-  "eu-ai-act": (container) => staticPage.render(container, "EU AI Act"),
+  suitability: (container) => suitabilityPage.render(container),
+  "eu-ai-act": (container) => euAiActPage.render(container),
 };
 
 // Open the modal on a page. traceId only matters for the Trace page; without it the latest trace shows.
